@@ -36,8 +36,8 @@
 
 
         <div class="row q-pa-md" style="border-style: ridge;">
-          <q-select style="max-width: 200px" dense filled v-model="model" use-input input-debounce="0" label="LIBDAT"
-            clearable :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
+          <q-select dense filled v-model="model" use-input input-debounce="0" label="LIBDAT" clearable
+            :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
