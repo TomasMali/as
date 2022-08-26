@@ -1,0 +1,22 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "Server for registrazione-user",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon server.js"
+    },
+    "author": "Tomas Mali",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "node-jt400": "^4.4.0",
+        "request": "^2.88.2"
+    },
+    "devDependencies" : {
+        "nodemon": "2.0.19"
+      }
+}
