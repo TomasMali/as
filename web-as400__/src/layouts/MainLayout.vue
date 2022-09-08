@@ -6,6 +6,22 @@
 
         <q-toolbar-title> Powered by TOMMAL </q-toolbar-title>
 
+
+
+        <q-select style="max-width: 250px" class="q-mr-md" v-model="modelId" use-input input-debounce="0" label="IP"
+          label-color="white" :options="optionsIp" @update:model-value="setIp" behavior="menu">
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">No results</q-item-section>
+            </q-item>
+          </template>
+
+          <template v-slot:append>
+            <q-icon name="lock" color="white" />
+          </template>
+        </q-select>
+
+
         <q-select style="max-width: 250px" class="q-mr-xl" v-model="model" use-input input-debounce="0" label="PROFILO"
           label-color="white" :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
           <template v-slot:no-option>
@@ -134,6 +150,8 @@ export default defineComponent({
     const model = ref(null);
     const stringOptions = ref([]);
     const options = ref([]);
+    const optionsIp = ref(['10.200.100.160', '10.200.100.188',])
+    const modelId = ref('10.200.100.160')
     const as = useStore();
     const pref = prefStore();
 
@@ -238,18 +256,28 @@ export default defineComponent({
       q.localStorage.set("darkMode", q.dark.isActive)
     }
 
+    const loadIps = () => {
+      if (!q.localStorage.getItem("as")) {
+        q.localStorage.set("as", modelId.value)
+      }
+      else
+        modelId.value = q.localStorage.getItem("as")
+    }
+
+
+    const setIp = () => {
+      q.localStorage.set("as", modelId.value)
+      q.localStorage.remove("currentUser")
+      location.reload()
+    }
+
     const loadDarkMode = () => {
-      console.log("dark mode:")
-      console.log(q.localStorage.getItem("darkMode"))
       dark.value = q.localStorage.getItem("darkMode")
       q.dark.set(dark.value)
     }
 
     const loadUserQueries = async () => {
-
       await queryStr.selectUserQuery(q.localStorage.getItem("currentUser"));
-
-
     };
 
     return {
@@ -259,6 +287,7 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
       dark,
+      setIp,
       toggleDark,
       loadDarkMode,
       filterFn,
@@ -272,12 +301,16 @@ export default defineComponent({
       loadUserQueries,
       as,
       pref,
+      optionsIp,
+      modelId,
+      loadIps,
       q,
       queryStr
     };
   },
 
   mounted() {
+    this.loadIps()
     this.loadDarkMode()
     this.loadUserPrefs();
     this.loadUsers();
@@ -288,4 +321,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
 </style>

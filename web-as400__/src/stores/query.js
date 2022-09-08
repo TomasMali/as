@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { LocalStorage } from 'quasar'
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
 export const queryStore = defineStore("query", {
@@ -83,8 +84,8 @@ export const queryStore = defineStore("query", {
     getQueryresult: (state) => state.queries,
     getQueriesSaved: (state) => state.queriesSaved,
     getQueriesPrefered: (state) => {
-      console.log("#############################à")
-      console.log(state.queriesSaved)
+      // console.log("#############################à")
+      // console.log(state.queriesSaved)
 
       return state.queriesSaved.filter(x => {
         return (x.PREF === 'S')
@@ -217,7 +218,9 @@ export const queryStore = defineStore("query", {
         ":3300/files/PRTFFLD1/?library=" +
         data.lib +
         "&tablename=" +
-        data.fileName;
+        data.fileName  +
+        "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",
@@ -260,10 +263,9 @@ export const queryStore = defineStore("query", {
         "http://" +
         window.location.hostname +
         ":3300/files/FILENAMES/?library=" +
-        data.filename;
-
-      const url1 =
-        "http://localhost:3300/files/FILENAMES/?library=" + data.filename;
+        data.filename  +
+        "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",
@@ -296,8 +298,9 @@ export const queryStore = defineStore("query", {
         "http://" +
         window.location.hostname +
         ":3300/files/SCHEMA/?library=" +
-        data.user;
-      let url1 = "http://localhost:3300/files/SCHEMA/?library=" + data.user;
+        data.user  +
+        "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",
@@ -326,8 +329,9 @@ export const queryStore = defineStore("query", {
     async excecQuery(query) {
       // "http://localhost:3300/files/?library=wrkjexp&tablename=role_user"
       let url =
-        "http://" + window.location.hostname + ":3300/files/?str=" + query;
-      let url1 = "http://localhost:3300/files/?str=" + query;
+        "http://" + window.location.hostname + ":3300/files/?str=" + query  +
+        "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",
@@ -369,7 +373,8 @@ export const queryStore = defineStore("query", {
         "&sqlstr=" +
         queryObj.sqlstr +
         "&note=" +
-        queryObj.note;
+        queryObj.note +       "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",
@@ -403,8 +408,9 @@ export const queryStore = defineStore("query", {
         "http://" +
         window.location.hostname +
         ":3300/files/selectUserQuery/?libdat=" +
-        user;
-      let url1 = "http://localhost:3300/files/selectUserQuery/?libdat=" + user;
+        user +   
+            "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",
@@ -448,7 +454,9 @@ export const queryStore = defineStore("query", {
         ":3300/files/deleteUserQuery/?libdat=" +
         user +
         "&title=" +
-        title;
+        title + 
+        "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",
@@ -486,7 +494,9 @@ export const queryStore = defineStore("query", {
         "&title=" +
         title +
         "&pref=" +
-        pref
+        pref + 
+        "&as=" +
+        LocalStorage.getItem("as")
 
       const response = await fetch(url, {
         method: "GET",

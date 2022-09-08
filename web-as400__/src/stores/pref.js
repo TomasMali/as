@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { LocalStorage } from 'quasar'
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
@@ -49,9 +50,8 @@ export const prefStore = defineStore("pref", {
     },
     actions: {
         async setUserPref(user) {
-            // "http://localhost:3300/files/?library=wrkjexp&tablename=role_user"
-            let url = "http://" + window.location.hostname + ":3300/files/USERPREF/?user=" + user;
-            let url1 = "http://localhost:3300/files/USERPREF/?user=" + user;
+            let url = "http://" + window.location.hostname + ":3300/files/USERPREF/?user=" + user +   "&as=" +
+            LocalStorage.getItem("as")
 
             const response = await fetch(url, {
                 method: "GET",
@@ -77,13 +77,11 @@ export const prefStore = defineStore("pref", {
             this.userPref = responseData;
         },
         async insertOrUpdateUserPrefs(pref) {
-            // "http://localhost:3300/files/?library=wrkjexp&tablename=role_user"
             let url = "http://" + window.location.hostname + ":3300/files/inserOrUpdatePref/?libdat=" + pref.user +
-                "&PREFL1=" + pref.prefl1 + "&PREFL2=" + pref.prefl2 + "&PREFL3=" + pref.prefl3 + "&PREFL4=" + pref.prefl4 + "&PREFL5=" + pref.prefl5;
+                "&PREFL1=" + pref.prefl1 + "&PREFL2=" + pref.prefl2 + "&PREFL3=" + pref.prefl3 + "&PREFL4=" + pref.prefl4 + "&PREFL5=" + pref.prefl5 +       "&as=" +
+                LocalStorage.getItem("as")
 
-            let url1 = "http://localhost:3300/files/inserOrUpdatePref/?libdat=" + pref.user +
-                "&PREFL1=" + pref.prefl1 + "&PREFL2=" + pref.prefl2 + "&PREFL3=" + pref.prefl3 + "&PREFL4=" + pref.prefl4 + "&PREFL5=" + pref.prefl5;
-
+        
             const response = await fetch(url, {
                 method: "GET",
                 cache: "no-cache",
