@@ -228,7 +228,7 @@ router.get("/SCHEMA", (req, res, next) => {
     var q = req.query;
 
     pool_upd = getPool(req.query.as)
-    console.log("GETTTT: " + req.query.as + "\n");
+    console.log("#####################: " + req.query.as + "\n");
 
     pool_upd
         .query(

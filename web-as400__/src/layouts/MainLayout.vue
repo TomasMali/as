@@ -59,7 +59,7 @@
         </q-avatar>
       </q-item-label>
       <q-list bordered separator class="text-primary text-subtitle2" style="max-height: 800px; overflow: auto">
-        <q-item dense v-for="item in queryStr.getQueriesPrefered" clickable :key="item.SQLSTR">
+        <q-item @click="exec(item.SQLSTR)" dense v-for="item in queryStr.getQueriesPrefered" clickable :key="item.SQLSTR">
 
           <q-item dense>
             <q-item-section>
@@ -71,7 +71,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item-section @click="exec(item.SQLSTR)">
+          <q-item-section >
             <div class="text-overline" style="font-size:small">
               {{ item.TITLE }}
             </div>
