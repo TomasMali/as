@@ -2,52 +2,112 @@
   <div class="">
     <q-card bordered class="q-my-sm q-mx-md">
       <q-card-section class="">
-
         <div class="row q-mb-md">
-
-
-          <div class="col  q-mr-md" style="border-style: ridge;" v-if="pref.getUserPrefAsObj.length > 0">
-            <q-option-group v-model="group" @update:model-value="onGroupChange" :options="pref.getUserPrefAsObj"
-              color="primary" inline />
+          <div
+            class="col q-mr-md"
+            style="border-style: ridge"
+            v-if="pref.getUserPrefAsObj.length > 0"
+          >
+            <q-option-group
+              v-model="group"
+              @update:model-value="onGroupChange"
+              :options="pref.getUserPrefAsObj"
+              color="primary"
+              inline
+            />
           </div>
 
-          <div class="col flex q-pa-md" style="border-style: ridge;">
-            <q-input dense style="width: 170px" square color="primary" label-color="primary" outlined clearable
-              v-model="fastWordSearch" label="Fast Search">
+          <div class="col flex q-pa-md" style="border-style: ridge">
+            <q-input
+              dense
+              style="width: 170px"
+              square
+              color="primary"
+              label-color="primary"
+              outlined
+              clearable
+              v-model="fastWordSearch"
+              label="Fast Search"
+            >
               <template v-slot:append>
                 <q-icon name="bolt" color="primary" />
               </template>
             </q-input>
 
-            <q-btn dense :loading="loading" inline color="primary q-ml-sm" label="Search" icon-right="send"
-              @click="fastSearch" :disable="
+            <q-btn
+              dense
+              :loading="loading"
+              inline
+              color="primary q-ml-sm"
+              label="Search"
+              icon-right="send"
+              @click="fastSearch"
+              :disable="
                 fastWordSearch == null ||
                 fastWordSearch == '' ||
                 fastWordSearch.length < 3
-              " />
-            <q-checkbox dense class="q-ml-xl" size="lg" left-label v-model="searchFile" label="Cerca File" />
+              "
+            />
+            <q-checkbox
+              dense
+              class="q-ml-xl"
+              size="lg"
+              left-label
+              v-model="searchFile"
+              label="Cerca File"
+            />
 
-            <q-checkbox dense class="q-ml-xl" size="lg" left-label v-model="deep" label="Ricerca profonda" />
+            <q-checkbox
+              dense
+              class="q-ml-xl"
+              size="lg"
+              left-label
+              v-model="deep"
+              label="Ricerca profonda"
+            />
+
+            <!-- <Voice @onVoice="voiceChanged"></Voice> -->
           </div>
-
         </div>
 
-
-
-
-        <div class="row q-pa-md" style="border-style: ridge;">
-          <q-select dense filled v-model="model" use-input input-debounce="0" label="LIBDAT" clearable
-            :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
+        <div class="row q-pa-md" style="border-style: ridge">
+          <q-select
+            dense
+            filled
+            v-model="model"
+            use-input
+            input-debounce="0"
+            label="LIBDAT"
+            clearable
+            :options="options"
+            @filter="filterFn"
+            @update:model-value="onClickLibdat"
+            behavior="menu"
+          >
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
               </q-item>
             </template>
           </q-select>
-          <q-select class="q-ml-md" style="max-height: 500px;" dense filled v-model="fileNameModel" use-input
-            :loading="loadingInputFiles" :disable="loadingInputFiles" input-debounce="0" label="FILE" autofocus
-            clearable :options="fileNamesOptions" @filter="filterFileNames" @update:model-value="onClickFilename"
-            behavior="menu">
+          <q-select
+            class="q-ml-md"
+            style="max-height: 500px"
+            dense
+            filled
+            v-model="fileNameModel"
+            use-input
+            :loading="loadingInputFiles"
+            :disable="loadingInputFiles"
+            input-debounce="0"
+            label="FILE"
+            autofocus
+            clearable
+            :options="fileNamesOptions"
+            @filter="filterFileNames"
+            @update:model-value="onClickFilename"
+            behavior="menu"
+          >
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
@@ -55,37 +115,90 @@
             </template>
           </q-select>
           <div class="q-ml-lg scritta">
-            <q-toggle dense v-model="queryToggle" size="xl" icon="visibility" label="Show 500" color="red" />
+            <q-toggle
+              dense
+              v-model="queryToggle"
+              size="xl"
+              icon="visibility"
+              label="Show 500"
+              color="red"
+            />
           </div>
-
         </div>
-
       </q-card-section>
     </q-card>
     <!-- Table 1 -->
-    <q-table v-if="!queryToggle && !queryStr.launchQueryPrefered" dense auto-width
-      class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" :grid="grid" :rows="rows"
-      :columns="columns" row-key="name" :loading="loading" boarderd :title="fileNameModel" separator="cell"
-      :rowsPerPage="30" :rows-per-page-options="[0, 8, 18]" style="height: 640px" :filter="filter">
+    <q-table
+      v-if="!queryToggle && !queryStr.launchQueryPrefered"
+      dense
+      auto-width
+      class="text-subtitle2 my-sticky-header-table"
+      table-header-class="text-white"
+      :grid="grid"
+      :rows="rows"
+      :columns="columns"
+      row-key="name"
+      :loading="loading"
+      boarderd
+      :title="fileNameModel"
+      separator="cell"
+      :rowsPerPage="30"
+      :rows-per-page-options="[0, 8, 18]"
+      style="height: 640px"
+      :filter="filter"
+    >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search word">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search word"
+        >
           <template v-slot:append>
             <q-icon name="search" color="white" />
             <q-toggle v-model="grid" color="red" label="Grid" />
           </template>
         </q-input>
 
-        <q-btn flat class="q-ml-xl" color="yellow" icon-right="archive" label="Export to csv" no-caps
-          @click="exportTable" />
+        <q-btn
+          flat
+          class="q-ml-xl"
+          color="yellow"
+          icon-right="archive"
+          label="Export to csv"
+          no-caps
+          @click="exportTable"
+        />
       </template>
     </q-table>
     <!-- Table 2 -->
-    <q-table class="text-subtitle2 my-sticky-header-table" table-header-class="text-white"
-      v-else-if="queryToggle && !queryStr.launchQueryPrefered" :rows="queries" row-key="index" dense auto-width
-      :grid="grid" :loading="loading" boarderd :title="fileNameModel" separator="cell" style="height: 640px"
-      :filter="filter" :rowsPerPage="10000" :rows-per-page-options="[0, 8, 18]">
+    <q-table
+      class="text-subtitle2 my-sticky-header-table"
+      table-header-class="text-white"
+      v-else-if="queryToggle && !queryStr.launchQueryPrefered"
+      :rows="queries"
+      row-key="index"
+      dense
+      auto-width
+      :grid="grid"
+      :loading="loading"
+      boarderd
+      :title="fileNameModel"
+      separator="cell"
+      style="height: 640px"
+      :filter="filter"
+      :rowsPerPage="10000"
+      :rows-per-page-options="[0, 8, 18]"
+    >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+        >
           <template v-slot:append>
             <q-icon name="search" color="white" />
             <q-toggle v-model="grid" color="red" label="Grid" />
@@ -94,16 +207,36 @@
       </template>
     </q-table>
     <!-- Table 3 -->
-    <q-table v-else-if="queryStr.queries.length" :loading="queryStr.loadingTable"
-      class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" title="Risultati query" dense
-      boarderd auto-width separator="cell" :rows="queryStr.queries" row-key="name" :rowsPerPage="30"
-      :rows-per-page-options="[0, 8, 18]" style="height: 640px" :filter="queryStr.filter" :grid="queryStr.grid">
+    <q-table
+      v-else-if="queryStr.queries.length"
+      :loading="queryStr.loadingTable"
+      class="text-subtitle2 my-sticky-header-table"
+      table-header-class="text-white"
+      title="Risultati query"
+      dense
+      boarderd
+      auto-width
+      separator="cell"
+      :rows="queryStr.queries"
+      row-key="name"
+      :rowsPerPage="30"
+      :rows-per-page-options="[0, 8, 18]"
+      style="height: 640px"
+      :filter="queryStr.filter"
+      :grid="queryStr.grid"
+    >
       <template v-slot:loading>
         <q-inner-loading showing color="primary" />
       </template>
 
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="queryStr.filter" placeholder="Search word">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="queryStr.filter"
+          placeholder="Search word"
+        >
           <template v-slot:append>
             <q-icon name="search" color="white" />
             <q-toggle color="red" v-model="queryStr.grid" label="Grid" />
@@ -111,7 +244,6 @@
         </q-input>
       </template>
     </q-table>
-
 
     <!--  <h1>{{as.getQueries}}</h1> -->
   </div>
@@ -125,6 +257,9 @@ import { queryStore } from "../stores/query";
 import { useStore } from "../stores/as";
 import { prefStore } from "../stores/pref";
 
+import { voiceStore } from "../stores/voice";
+import Voice from "./Voice.vue";
+
 export default {
   data() {
     return {
@@ -132,30 +267,24 @@ export default {
       as: null,
       pref: null,
       queryStr: null,
-
+      voice: null,
       fastWordSearch: "",
       deep: false,
       searchFile: false,
-
       queries: [],
       queryToggle: false,
       launchQueryPrefered: false,
-
       pagination: {
         rowsPerPage: 0,
       },
-
       group: ref(""),
-
       loadingInputFiles: false,
       model: null,
       stringOptions: [],
       options: this.stringOptions,
-
       fileNameModel: null,
       filenamesArray: [],
       fileNamesOptions: this.filenamesArray,
-
       separator: "vertical",
       filter: "",
       grid: false,
@@ -199,7 +328,6 @@ export default {
           sortable: true,
           align: "left",
         },
-
         {
           name: "KEY_ORDER",
           label: "KEY_ORDER",
@@ -207,7 +335,6 @@ export default {
           sortable: true,
           align: "left",
         },
-
         {
           name: "DATA_TYPE",
           label: "TIPO",
@@ -239,12 +366,13 @@ export default {
           sortable: true,
         },
       ],
-
-
     };
   },
   methods: {
-
+    voiceChanged() {
+      // console.log("Io sono ", this.voice.transcript);
+      // this.fileNameModel = this.voice.transcript;
+    },
 
     exportTable() {
       // naive encoding to csv format
@@ -264,19 +392,14 @@ export default {
           )
         )
         .join("\r\n");
-
       const status = exportFile("table-export.csv", content, "text/csv");
-
       if (status !== true) {
       }
     },
-
     wrapCsvValue(val, formatFn) {
       let formatted = formatFn !== void 0 ? formatFn(val) : val;
-
       formatted =
         formatted === void 0 || formatted === null ? "" : String(formatted);
-
       formatted = formatted.split('"').join('""');
       /**
        * Excel accepts \n and \r in strings, but some other CSV parsers do not
@@ -284,14 +407,8 @@ export default {
        */
       // .split('\n').join('\\n')
       // .split('\r').join('\\r')
-
       return `"${formatted}"`;
     },
-
-
-
-
-
     /**Loads the filenames list combo based oin the libdat */
     async loadFilenames() {
       try {
@@ -311,8 +428,6 @@ export default {
         console.log(error);
       }
     },
-
-
     /**
      * Loads the libdat based on the first one selected in default
      */
@@ -321,34 +436,24 @@ export default {
         const data = {
           user: "",
         };
-
         // Sets the current logged user
         await this.pref.setUserPref(this.q.localStorage.getItem("currentUser"));
-
         if ((await this.pref.getUserPrefAsObj.length) > 0) {
           this.group = this.pref.getUserPrefAsObj[0].value;
           this.model = this.group;
         }
-
         await this.as.getUsersAction(data);
-
         await this.as.getUsers.forEach((element) => {
           this.stringOptions.push(element.TABLE_SCHEMA);
         });
-
         this.loadFilenames();
       } catch (error) {
         console.log(error);
       }
     },
-
-
-
-
-
     /**
      * PRTFFLD
-     * Loads the table with the filename information 
+     * Loads the table with the filename information
      */
     async loadFiles() {
       if (this.fileNameModel) {
@@ -359,7 +464,6 @@ export default {
             lib: this.model,
             fileName: this.fileNameModel.split("-->")[0].trim(),
           };
-
           await this.as.getFilesAction(data);
           this.rows = this.as.getFiles;
           //   this.loadQueries();
@@ -370,10 +474,7 @@ export default {
         }
       }
     },
-
-
-
-    /** 
+    /**
      * Query first 50000 records
      * Loads the table with data records saved on the table selected based on the libdat and filename
      */
@@ -387,9 +488,7 @@ export default {
             fileName: this.fileNameModel.split("-->")[0].trim(),
           };
           await this.as.getQueriesAction(data);
-
           this.queries = this.as.getQueries;
-
           this.loading = false;
         } catch (error) {
           console.log(error);
@@ -397,9 +496,6 @@ export default {
         }
       }
     },
-
-
-
     /**
      * Loads the table with the fast searching word
      */
@@ -411,14 +507,13 @@ export default {
           const data = {
             user:
               this.q.localStorage.getItem("currentUser") != null &&
-                this.q.localStorage.getItem("currentUser") != ""
+              this.q.localStorage.getItem("currentUser") != ""
                 ? this.q.localStorage.getItem("currentUser").trim()
                 : "",
             search_word: this.fastWordSearch.trim(),
             all: this.deep ? "all" : "no",
-            searchFile: this.searchFile ? "true" : "false"
+            searchFile: this.searchFile ? "true" : "false",
           };
-
           await this.as.getFastFilesAction(data);
           this.rows = this.as.getFastFiles;
           //   this.loadQueries();
@@ -429,19 +524,15 @@ export default {
         }
       }
     },
-
-
     onClickLibdat(rr) {
       this.loadFilenames();
       this.fileNameModel = null;
     },
-
     onClickFilename(rr) {
       this.loadFiles();
-      this.filter = ''
-      this.queryStr.launchQueryPrefered = false
+      this.filter = "";
+      this.queryStr.launchQueryPrefered = false;
     },
-
     filterFileNames(val, update) {
       if (val === "") {
         update(() => {
@@ -449,7 +540,6 @@ export default {
         });
         return;
       }
-
       update(() => {
         const needle = val.toLowerCase();
         this.fileNamesOptions = this.filenamesArray.filter(
@@ -457,7 +547,6 @@ export default {
         );
       });
     },
-
     filterFn(val, update) {
       if (val === "") {
         update(() => {
@@ -465,7 +554,6 @@ export default {
         });
         return;
       }
-
       update(() => {
         const needle = val.toLowerCase();
         this.options = this.stringOptions.filter(
@@ -474,27 +562,24 @@ export default {
       });
     },
     /**
-     * Calls the search loading file 
+     * Calls the search loading file
      */
     fastSearch() {
       this.loadFastFiles();
     },
-
     onGroupChange() {
       this.model = this.group;
       this.loadFilenames();
       this.fileNameModel = null;
     },
-
   },
-
   // Watcher
   watch: {
     // whenever question changes, this function will run
     queryToggle(newQuestion, oldQuestion) {
       if (newQuestion) {
         this.loadQueries();
-        this.queryStr.launchQueryPrefered = false
+        this.queryStr.launchQueryPrefered = false;
       }
     },
     fileNameModel(newQuestion, oldQuestion) {
@@ -548,7 +633,6 @@ export default {
             sortable: true,
             align: "left",
           },
-
           {
             name: "KEY_ORDER",
             label: "KEY_ORDER",
@@ -556,7 +640,6 @@ export default {
             sortable: true,
             align: "left",
           },
-
           {
             name: "DATA_TYPE",
             label: "TIPO",
@@ -587,11 +670,9 @@ export default {
             field: "CHARACTER_MAXIMUM_LENGTH",
             sortable: true,
           },
-        ]
-      }
-      else {
+        ];
+      } else {
         this.columns = [
-
           {
             name: "TABLE_SCHEMA",
             label: "LIBRERIA",
@@ -619,32 +700,24 @@ export default {
             field: "TABLE_DEFINER",
             sortable: true,
             align: "center",
-          }
-
-
-        ]
+          },
+        ];
       }
-    }
-
-
+    },
   },
-
   created() {
-
     this.as = useStore();
     this.pref = prefStore();
     this.queryStr = queryStore();
-
     this.loadLibdat();
-
+    this.voice = voiceStore();
     //this.as.getQueriesAction({lib:"wrkjexp",fileName: "role_user"})
   },
+  components: { Voice },
 };
 </script>
 
 <style lang="sass">
-
-
 .scritta .q-toggle div.q-toggle__label.q-anchor--skip
   color: #673BB6
 
@@ -660,7 +733,6 @@ export default {
   thead tr:first-child th
     /* bg color is important for th; just specify one */
     background-color: #673BB6
-
 
   thead tr th
     position: sticky

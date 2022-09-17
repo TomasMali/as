@@ -38,13 +38,11 @@ export const voiceStore = defineStore("voice", {
             }
 
             this.sr.onresult = (evt) => {
-
-                console.log(evt)
-
                 const t = Array.from(evt.results)
                     .map(result => result[0])
                     .map(result => result.transcript)
                     .join('')
+                
 
                 this.transcript = t
 
@@ -52,11 +50,23 @@ export const voiceStore = defineStore("voice", {
         },
         toggleMic(val) {
             if (this.isRecording) {
+                 this.transcript = ref('')
                 this.sr.stop()
             }
-            else
-                this.sr.start()
+            else {
+                                 this.transcript = ref('')
+                                 this.sr.start()
+                                }
 
+
+        },
+        cleanTranscript(val) {
+            if (this.isRecording) {
+                
+                this.sr.stop()
+            }
+            else if (!this.isRecording)
+            this.sr.start()
         }
 
     }
