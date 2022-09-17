@@ -4,7 +4,11 @@
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title> Powered by TOMMAL </q-toolbar-title>
+        <q-toolbar-title> 
+          
+        <Voice></Voice>
+        
+        </q-toolbar-title>
 
 
 
@@ -125,6 +129,7 @@ import { queryStore } from "../stores/query";
 import { useQuasar } from "quasar";
 
 import { useRouter } from "vue-router";
+import Voice from "src/pages/Voice.vue";
 
 const queryStr = queryStore();
 
@@ -133,7 +138,8 @@ export default defineComponent({
 
   components: {
     EssentialLink,
-  },
+    Voice
+},
 
   setup() {
 
@@ -150,7 +156,7 @@ export default defineComponent({
     const model = ref(null);
     const stringOptions = ref([]);
     const options = ref([]);
-    const optionsIp = ref(['10.200.100.160', '10.200.100.188',])
+    const optionsIp = ref(['10.200.100.160', '10.200.100.188','10.200.100.130','10.0.17.131'])
     const modelId = ref('10.200.100.160')
     const as = useStore();
     const pref = prefStore();

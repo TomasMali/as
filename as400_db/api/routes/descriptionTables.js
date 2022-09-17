@@ -9,6 +9,14 @@ function getPool(as){
     return pool.wrk
     else if(as === '10.200.100.188')
     return pool.nse
+    else if(as === '10.200.100.130'){
+        console.log("Entrato")
+        return pool.as130
+    }
+    else if(as === '10.0.17.131'){
+        console.log("Entrato")
+        return pool.bertin
+    }
 }
 
 
@@ -48,6 +56,9 @@ router.get("/all", (req, res, next) => {
  */
 // http://localhost:3300/files/?library=WRKTOMMAL&tablename=role_user
 router.get("/", (req, res, next) => {
+
+
+    console.log( req.query.str)
 
 
     pool_upd = getPool(req.query.as)
@@ -232,7 +243,7 @@ router.get("/SCHEMA", (req, res, next) => {
 
     pool_upd
         .query(
-            "SELECT DISTINCT(TABLE_SCHEMA) FROM QSYS2.SYSTABLES WHERE TABLE_SCHEMA LIKE '%" +
+            "SELECT DISTINCT(TABLE_SCHEMA) FROM QSYS2.SYSTABLES s WHERE TABLE_SCHEMA LIKE '%" +
             q.library.toUpperCase() +
             "%'"
         )

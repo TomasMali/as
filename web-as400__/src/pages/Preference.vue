@@ -14,17 +14,8 @@
 
       <q-card-section>
         <div class="q-pa-md row items-start q-gutter-md">
-          <q-select
-            filled
-            v-model="model1"
-            use-input
-            input-debounce="0"
-            label="LIBDAT 1"
-            clearable
-            :options="options"
-            @filter="filterFn"
-            behavior="menu"
-          >
+          <q-select filled v-model="model1" use-input input-debounce="0" label="LIBDAT 1" clearable :options="options"
+            @filter="filterFn" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
@@ -32,17 +23,8 @@
             </template>
           </q-select>
 
-          <q-select
-            filled
-            v-model="model2"
-            use-input
-            input-debounce="0"
-            label="LIBDAT 2"
-            clearable
-            :options="options"
-            @filter="filterFn"
-            behavior="menu"
-          >
+          <q-select filled v-model="model2" use-input input-debounce="0" label="LIBDAT 2" clearable :options="options"
+            @filter="filterFn" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
@@ -50,17 +32,8 @@
             </template>
           </q-select>
 
-          <q-select
-            filled
-            v-model="model3"
-            use-input
-            input-debounce="0"
-            label="LIBDAT 3 "
-            clearable
-            :options="options"
-            @filter="filterFn"
-            behavior="menu"
-          >
+          <q-select filled v-model="model3" use-input input-debounce="0" label="LIBDAT 3 " clearable :options="options"
+            @filter="filterFn" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
@@ -68,17 +41,8 @@
             </template>
           </q-select>
 
-          <q-select
-            filled
-            v-model="model4"
-            use-input
-            input-debounce="0"
-            label="LIBDAT 4"
-            clearable
-            :options="options"
-            @filter="filterFn"
-            behavior="menu"
-          >
+          <q-select filled v-model="model4" use-input input-debounce="0" label="LIBDAT 4" clearable :options="options"
+            @filter="filterFn" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
@@ -86,23 +50,20 @@
             </template>
           </q-select>
 
-          <q-select
-            filled
-            v-model="model5"
-            use-input
-            input-debounce="0"
-            label="LIBDAT 5"
-            clearable
-            :options="options"
-            @filter="filterFn"
-            behavior="menu"
-          >
+          <q-select filled v-model="model5" use-input input-debounce="0" label="LIBDAT 5" clearable :options="options"
+            @filter="filterFn" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
               </q-item>
             </template>
           </q-select>
+
+
+          <button class="mic" @click="toggleMic">Record</button>
+          <div class="transcript" v-text="transcript"></div>
+
+
         </div>
       </q-card-section>
 
@@ -176,28 +137,28 @@ const setPrefs = async () => {
 
   if (pref.getUserPrefAsObj.length) {
     model1.value = pref.getUserPrefAsObj[0].value;
-    model2.value = pref.getUserPrefAsObj[1] != undefined ? pref.getUserPrefAsObj[1].value: "";
+    model2.value = pref.getUserPrefAsObj[1] != undefined ? pref.getUserPrefAsObj[1].value : "";
     model3.value = pref.getUserPrefAsObj[2] != undefined ? pref.getUserPrefAsObj[2].value : "";
-    model4.value = pref.getUserPrefAsObj[3] != undefined ? pref.getUserPrefAsObj[3].value: "";
-    model5.value = pref.getUserPrefAsObj[4] != undefined ? pref.getUserPrefAsObj[4].value: "";
+    model4.value = pref.getUserPrefAsObj[3] != undefined ? pref.getUserPrefAsObj[3].value : "";
+    model5.value = pref.getUserPrefAsObj[4] != undefined ? pref.getUserPrefAsObj[4].value : "";
   }
 };
 
 const savePref = async () => {
 
 
-if(model1.value == null && model2.value == null && model3.value == null && model4.value==null && model5.value == null){
-      q.dialog({
-        title: 'Attenzione',
-        message: 'Selezionare almeno una libreria preferita!'
-      }).onOk(() => {
-        // console.log('OK')
-      }).onCancel(() => {
-        // console.log('Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-      })
-}
+  if (model1.value == null && model2.value == null && model3.value == null && model4.value == null && model5.value == null) {
+    q.dialog({
+      title: 'Attenzione',
+      message: 'Selezionare almeno una libreria preferita!'
+    }).onOk(() => {
+      // console.log('OK')
+    }).onCancel(() => {
+      // console.log('Cancel')
+    }).onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    })
+  }
 
 
 
@@ -211,25 +172,78 @@ if(model1.value == null && model2.value == null && model3.value == null && model
   });
 
 
-    q.notify({
-              color: "primary",
-              textColor: "white",
-              icon: "save",
-              message: "Preferenza salvata con successo",
-              actions: [
-            { label: 'Dismiss', color: 'white', handler: () => {} }
-          ]
-            });
+  q.notify({
+    color: "primary",
+    textColor: "white",
+    icon: "save",
+    message: "Preferenza salvata con successo",
+    actions: [
+      { label: 'Dismiss', color: 'white', handler: () => { } }
+    ]
+  });
 
   setPrefs()
 };
 
+
+// Lets start recognition
+const transcript = ref('')
+const isRecording = ref(false)
+const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
+const sr = new Recognition()
+
+
+
+
 onMounted(() => {
   console.log("mounted!");
   loadUsers();
-
   setPrefs();
+
+  sr.continuous = true
+  sr.interimResults = true
+
+  sr.onstart = () => {
+    console.log("start recognition")
+    isRecording.value = true
+  }
+
+  sr.onend = () => {
+    console.log("end recognition")
+    isRecording.value = false
+  }
+
+  sr.onresult = (evt) => {
+
+    console.log(evt)
+
+    const t = Array.from( evt.results)
+    .map(result => result[0])
+    .map(result => result.transcript)
+    .join('')
+
+transcript.value = t
+
+//if (t.toLocaleLowerCase().includes("work 90")){
+  model5.value = "WRK90MUL"
+//}
+  }
+
+ // sr.start()
 });
+
+
+
+const toggleMic = () => {
+  if (isRecording.value){
+    sr.stop()
+  }
+  else
+  sr.start()
+}
+
+
 </script>
 
 
