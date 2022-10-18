@@ -58,12 +58,8 @@
               </q-item>
             </template>
           </q-select>
-
-
-          <button class="mic" @click="toggleMic">Record</button>
-          <div class="transcript" v-text="transcript"></div>
-
-
+          <!-- <button class="mic" @click="toggleMic">Record</button>
+          <div class="transcript" v-text="transcript"></div> -->
         </div>
       </q-card-section>
 
@@ -71,6 +67,45 @@
         <q-btn flat @click="savePref">Save</q-btn>
       </q-card-actions>
     </q-card>
+
+
+
+
+
+
+
+
+
+
+
+    <q-card bordered class="my-card">
+      <q-card-section>
+        <div class="text-h6">Inserisci nuova connessione</div>
+      </q-card-section>
+
+   
+
+      <q-separator inset />
+
+      <q-card-section>
+        <div class="q-pa-md row items-start q-gutter-md">
+
+        
+          <q-input v-model="ip" label="Indirizzo Ip" />
+          <q-input v-model="userDb" label="Utente database" />
+          <q-input v-model="passwordDb"  label="Password database" />
+
+
+        </div>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat @click="saveConnection">Save</q-btn>
+      </q-card-actions>
+    </q-card>
+
+
+
   </div>
 </template>
 
@@ -160,8 +195,6 @@ const savePref = async () => {
     })
   }
 
-
-
   await pref.insertOrUpdateUserPrefs({
     user: q.localStorage.getItem("currentUser"),
     prefl1: model1.value,
@@ -185,6 +218,77 @@ const savePref = async () => {
   setPrefs()
 };
 
+// Insert New Connection
+
+const ip = ref(null);
+const userDb = ref(null);
+const passwordDb = ref(null);
+
+
+const saveConnection = async () => {
+
+if (ip.value == null || userDb.value == null || passwordDb.value == null ) {
+  q.dialog({
+    title: 'Attenzione',
+    message: 'Tutti i campi devono essere compilati'
+  }).onOk(() => {
+    // console.log('OK')
+  }).onCancel(() => {
+    // console.log('Cancel')
+  }).onDismiss(() => {
+    // console.log('I am triggered on both OK and Cancel')
+  })
+
+  return;
+}
+
+
+await pref.insertConnectionPrefs({
+  ip: ip.value, 
+  userDb: userDb.value,
+  passwordDb: passwordDb.value,
+})
+.then(res => {
+
+
+  q.notify({
+  color: "primary",
+  textColor: "white",
+  timeout: 1000,
+  icon: "save",
+  message:  pref.statusConnection ,
+  onDismiss: () => { location.reload()} ,
+  actions: [
+    { label: 'Dismiss', color: 'white', handler: () => { } }
+  ]
+});
+
+
+
+
+})
+.catch(err => {
+  q.notify({
+    type: 'negative',
+    position: 'center',
+
+  message:  pref.statusConnection ,
+  actions: [
+    { label: 'Dismiss', color: 'white', handler: () => { } }
+  ]
+});
+})
+
+
+}
+
+
+
+
+
+
+
+
 
 // Lets start recognition
 const transcript = ref('')
@@ -192,9 +296,6 @@ const isRecording = ref(false)
 const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition
 
 const sr = new Recognition()
-
-
-
 
 onMounted(() => {
   console.log("mounted!");

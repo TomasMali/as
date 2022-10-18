@@ -65,7 +65,7 @@
    </pre>
 
     <!-- Tabella dei risultati-->
-    <q-table v-else-if="queryStr.queries.length" :loading="queryStr.loadingTable"
+    <q-table v-else-if="queryStr.showTable" :loading="queryStr.loadingTable"
       class="q-mx-xl q-my-lg text-subtitle2 my-sticky-header-table" table-header-class="text-white"
       title="Risultati query" dense boarderd auto-width separator="cell" :rows="queryStr.queries" row-key="name"
       :rowsPerPage="30" :rows-per-page-options="[0, 8, 18]" style="height: 480px" :filter="queryStr.filter"
@@ -272,8 +272,9 @@ const faa = (ev) => {
 };
 
 const startQuery = async (sql) => {
+  queryStr.showTable = true
   queryStr.loadingTable = true;
-  await queryStr.excecQuery(sql);
+  await queryStr.excecQuery(q.localStorage.getItem("currentUser"),sql);
   queryStr.loadingTable = false;
 };
 

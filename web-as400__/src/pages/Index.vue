@@ -129,6 +129,7 @@
     </q-card>
     <!-- Table 1 -->
     <q-table
+    :loading="loadingTable"
       v-if="!queryToggle && !queryStr.launchQueryPrefered"
       dense
       auto-width
@@ -138,7 +139,6 @@
       :rows="rows"
       :columns="columns"
       row-key="name"
-      :loading="loading"
       boarderd
       :title="fileNameModel"
       separator="cell"
@@ -147,6 +147,10 @@
       style="height: 640px"
       :filter="filter"
     >
+    <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
+      
       <template v-slot:top-right>
         <q-input
           borderless
@@ -191,6 +195,8 @@
       :rowsPerPage="10000"
       :rows-per-page-options="[0, 8, 18]"
     >
+ 
+
       <template v-slot:top-right>
         <q-input
           borderless
@@ -289,6 +295,7 @@ export default {
       filter: "",
       grid: false,
       loading: false,
+      loadingTable: false,
       fileName: "ROLE_USER",
       lib: "WRKJEXP",
       rows: [],
@@ -457,7 +464,7 @@ export default {
      */
     async loadFiles() {
       if (this.fileNameModel) {
-        this.loading = true;
+        this.loadingTable = true;
         this.rows = [];
         try {
           const data = {
@@ -467,10 +474,10 @@ export default {
           await this.as.getFilesAction(data);
           this.rows = this.as.getFiles;
           //   this.loadQueries();
-          this.loading = false;
+          this.loadingTable = false;
         } catch (error) {
           console.log(error);
-          this.loading = false;
+          this.loadingTable = false;
         }
       }
     },

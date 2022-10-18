@@ -12,6 +12,7 @@ export const queryStore = defineStore("query", {
       queriesSavedStatus: null,
       loaderUserQuery: false,
       loadingTable: false,
+      showTable: ref(false),
       dialog: ref(false),
       title: ref(""),
       sqlQuery: ref(""),
@@ -221,6 +222,11 @@ export const queryStore = defineStore("query", {
         data.fileName  +
         "&as=" +
         LocalStorage.getItem("as")
+        + "&userLib="+LocalStorage.getItem("currentUser")+
+        "&userDb=" +
+        LocalStorage.getItem("userDb")
+
+        console.log(url)
 
       const response = await fetch(url, {
         method: "GET",
@@ -266,6 +272,9 @@ export const queryStore = defineStore("query", {
         data.filename  +
         "&as=" +
         LocalStorage.getItem("as")
+        + "&userLib="+LocalStorage.getItem("currentUser")+
+        "&userDb=" +
+        LocalStorage.getItem("userDb")
 
       const response = await fetch(url, {
         method: "GET",
@@ -301,6 +310,9 @@ export const queryStore = defineStore("query", {
         data.user  +
         "&as=" +
         LocalStorage.getItem("as")
+        + "&userLib="+LocalStorage.getItem("currentUser")+
+        "&userDb=" +
+        LocalStorage.getItem("userDb")
 
       const response = await fetch(url, {
         method: "GET",
@@ -326,12 +338,15 @@ export const queryStore = defineStore("query", {
       this.optionLibdat = responseData;
     },
 
-    async excecQuery(query) {
+    async excecQuery(libdat,query) {
       // "http://localhost:3300/files/?library=wrkjexp&tablename=role_user"
       let url =
         "http://" + window.location.hostname + ":3300/files/?str=" + query  +
         "&as=" +
         LocalStorage.getItem("as")
+        + "&library=" + libdat +
+        "&userDb=" +
+        LocalStorage.getItem("userDb")
 
         console.log(url)
 

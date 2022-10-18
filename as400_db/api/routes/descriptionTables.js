@@ -4,39 +4,103 @@ const pool = require("./connection");
 
 
 
-function getPool(as){
-    if (as === '10.200.100.160')
-    return pool.wrk
-    else if(as === '10.200.100.188')
-    return pool.nse
-    else if(as === '10.200.100.130'){
-        console.log("Entrato")
-        return pool.as130
+
+
+// {
+//     "ip": "10.200.100.160",
+//     "userDb": "wrktommal",
+//     "passwordDb": "tommal"
+// }
+router.post('/insertConnection', async (req, res, next) => {
+
+    const ip = req.body.ip;
+    const userDb = req.body.userDb
+    const password = req.body.passwordDb
+
+
+    const config = {
+        host: ip,
+        user: userDb,
+        password: password,
     }
-    else if(as === '10.0.17.131'){
-        console.log("Entrato")
-        return pool.bertin
-    }
-}
+    const poolTestConnection = require('node-jt400').pool(config);
+    const connectionTest = "SELECT * FROM QSYS2.SYSTABLES WHERE SYSTEM_TABLE_SCHEMA = 'QTEMP' LIMIT 1"
+
+    poolTestConnection
+        .query(connectionTest)
+        .then(async resultConnection => {
+
+            pool_upd = await pool("fake", "fake")
+
+            pool_upd
+                .insertAndGetId('INSERT INTO WRKTOMMAL.DB_IPS (CLIEIP, USERDB, PASSDB) VALUES(?,?,?)', [ip, userDb, password])
+                .then(result => {
+                    console.log('Inserted new row with id ' + result);
+        
+                    res.status(200).json({
+                        "message": "La connessione è stata inserita con successo"
+                    });
+                })
+                .catch(error => {
+                    res.status(403).json({
+                        "error": "Connessione esiste già"
+                    });
+                })
+        })
+        .catch(error => {
+            console.log('error: Connection does not exists for: ' +  ip + " User: " + userDb);
+
+            res.status(404).json({
+                "error": "La connessione non esiste. Attenzione a non bloccare l'utente dopo 3 tentativi!"
+            })
+        });
+
+
+})
 
 
 /**
  * Gets all the dances
  */
-// http://localhost:3300/files/?library=WRKTOMMAL&tablename=role_user
-router.get("/all", (req, res, next) => {
+// http://localhost:3300/files/all/?library=WRKTOMMAL&tablename=DB_IPS&as=10.200.100.160
+router.get("/all", async (req, res, next) => {
     console.log("GET: " + req.query.library + "\n");
-    console.log("GET: " + req.query.tablemane + "\n");
+    console.log("GET: " + req.query.tablename + "\n");
 
-    pool_upd =  getPool(req.query.as)
+    pool_upd = await pool(req.query.userDb, req.query.as)
+
+    const sql_str = "SELECT * FROM " +
+        req.query.library.toUpperCase().trim() +
+        "." +
+        req.query.tablename.toUpperCase().trim() +
+        " LIMIT 500"
 
     pool_upd
         .query(
-            "SELECT * FROM " +
-            req.query.library.toUpperCase().trim() +
-            "." +
-            req.query.tablename.toUpperCase().trim() +
-            " LIMIT 500"
+            sql_str
+        )
+        .then((result) => {
+            console.log("Okkkkkkkkkkkkk")
+            res.status(200).json(result);
+        })
+        .catch((error) => {
+            console.log("error");
+            console.log(error);
+        });
+});
+
+http://localhost:3300/files/getIps/?library=WRKTOMMAL
+router.get("/getIps", async (req, res, next) => {
+    console.log("GET: " + req.query.library + "\n");
+
+
+    pool_upd = await pool("fake", "fake")
+
+    const sql_str = "SELECT USERDB, CLIEIP FROM WRKTOMMAL.DB_IPS "
+
+    pool_upd
+        .query(
+            sql_str
         )
         .then((result) => {
             res.status(200).json(result);
@@ -52,16 +116,14 @@ router.get("/all", (req, res, next) => {
 
 
 /**
- * Gets all the dances
+ * Gets all the dances  @used
  */
 // http://localhost:3300/files/?library=WRKTOMMAL&tablename=role_user
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
 
+    console.log(req.query.str)
 
-    console.log( req.query.str)
-
-
-    pool_upd = getPool(req.query.as)
+    pool_upd = await pool(req.query.userDb, req.query.as)
 
     console.log("GET: " + req.query.str + "\n");
     if (req.query.str.toUpperCase().includes('DELETE') || req.query.str.toUpperCase().includes('UPDATE') || req.query.str.toUpperCase().includes('DROP')) {
@@ -86,34 +148,34 @@ router.get("/", (req, res, next) => {
 
 // SELECT * FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = 'WRK90MUL' AND TABLE_NAME = 'GCMOV00F'
 // http://localhost:3000/files/PRTFFLD/?library=WRK90MUL&tablename=gcpro00f
-router.get("/PRTFFLD", (req, res, next) => {
-    var q = req.query;
+// router.get("/PRTFFLD", async (req, res, next) => {
+//     var q = req.query;
 
-    pool_upd = getPool(req.query.as)
+//     pool_upd = await pool(req.query.library, req.query.as)
 
-    console.log("GET: " + q.library.toUpperCase() + "\n");
-    console.log("GET: " + q.tablename.toUpperCase() + "\n");
-    pool_upd
-        .query(
-            "SELECT COLUMN_NAME, COLUMN_TEXT , DATA_TYPE, LENGTH,NUMERIC_SCALE, CHARACTER_MAXIMUM_LENGTH, COLUMN_DEFAULT FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = ? AND TABLE_NAME = ?", [q.library.toUpperCase(), q.tablename.toUpperCase()]
-        )
-        .then((result) => {
-            res.status(200).json(result);
-        })
-        .catch((error) => {
-            res.status(404);
-            console.log("error");
-            console.log(error);
-        });
-});
+//     console.log("GET: " + q.library.toUpperCase() + "\n");
+//     console.log("GET: " + q.tablename.toUpperCase() + "\n");
+//     pool_upd
+//         .query(
+//             "SELECT COLUMN_NAME, COLUMN_TEXT , DATA_TYPE, LENGTH,NUMERIC_SCALE, CHARACTER_MAXIMUM_LENGTH, COLUMN_DEFAULT FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = ? AND TABLE_NAME = ?", [q.library.toUpperCase(), q.tablename.toUpperCase()]
+//         )
+//         .then((result) => {
+//             res.status(200).json(result);
+//         })
+//         .catch((error) => {
+//             res.status(404);
+//             console.log("error");
+//             console.log(error);
+//         });
+// });
 
 // SELECT * FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = 'WRK90MUL' AND TABLE_NAME = 'GCMOV00F'
 // http://localhost:3300/files/PRTFFLD1/?library=WRK90MUL&tablename=gcpro00f
-router.get("/PRTFFLD1", (req, res, next) => {
+router.get("/PRTFFLD1", async (req, res, next) => {
     var q = req.query;
-    pool_upd = getPool(req.query.as)
+    pool_upd = await pool(req.query.userDb, req.query.as)
 
-    console.log("GET: " + q.library.toUpperCase() + "\n");
+    console.log("GET: " + q.library + "\n");
     console.log("GET: " + q.tablename.toUpperCase() + "\n");
     pool_upd
         .query(
@@ -131,7 +193,9 @@ router.get("/PRTFFLD1", (req, res, next) => {
 
 // SELECT * FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = 'WRK90MUL' AND TABLE_NAME = 'GCMOV00F'
 // http://localhost:3300/files/PRTFFLD_SMART/?search_word=CDCNCN&user=WRKTOMMAL
-router.get("/PRTFFLD_SMART", (req, res, next) => {
+
+// @used
+router.get("/PRTFFLD_SMART", async (req, res, next) => {
     var q = req.query;
     var all = q.all === 'all' ? true : false
     var seachFile = q.searchFile == 'true' ? true : false
@@ -147,11 +211,13 @@ router.get("/PRTFFLD_SMART", (req, res, next) => {
     completeWord += "%"
     // console.log(completeWord)
 
-    pool.wrk
+    pool_upd = await pool("fail", "fail")
+
+    pool_upd
         .query("SELECT * FROM WRKTOMMAL.DB_HELPER WHERE LIBDAT = ? AND ip = ? ", [
             q.user.toUpperCase(), q.as
         ])
-        .then((result) => {
+        .then(async (result) => {
 
             var str = ""
 
@@ -181,9 +247,9 @@ router.get("/PRTFFLD_SMART", (req, res, next) => {
                 "') ORDER BY	c.table_schema,	c.table_name, ORDINAL_POSITION "
 
 
-            // Richerca solo per colone
+            // Richerca solo per colonne
             if (!seachFile) {
-                pool_upd = getPool(req.query.as)
+                pool_upd = await pool(req.query.userDb, req.query.as)
                 pool_upd
                     .query(
                         "SELECT	c.ordinal_position,	c.column_name,	k.ordinal_position AS key_column,	k.asc_or_desc AS key_order,	c.data_type,	c.length,	c.numeric_scale,	c.is_nullable,	c.column_text,	c.COLUMN_DEFAULT,	c.table_schema,	c.table_name FROM	qsys2.syscolumns c JOIN qsys2.systables t ON c.table_schema = t.table_schema AND c.table_name = t.table_name LEFT OUTER JOIN sysibm.sqlstatistics k ON	c.table_schema = k.table_schem	AND c.table_name = k.table_name	AND c.table_name = k.index_name	AND c.column_name = k.column_name WHERE  " +
@@ -206,7 +272,7 @@ router.get("/PRTFFLD_SMART", (req, res, next) => {
                     });
             }
             else {
-                pool_upd = getPool(req.query.as)
+                pool_upd = await pool(req.query.userDb, req.query.as)
                 // Richerca per file
                 sqlFiles_2 = "   SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TEXT ,TABLE_DEFINER FROM QSYS2.SYSTABLES WHERE UPPER(TABLE_NAME) LIKE '" + completeWord + "'  OR UPPER(TABLE_TEXT) LIKE '" + completeWord + "'"
                 pool_upd
@@ -235,10 +301,10 @@ router.get("/PRTFFLD_SMART", (req, res, next) => {
 
 //SELECT DISTINCT(TABLE_SCHEMA) FROM QSYS2.SYSTABLES WHERE TABLE_SCHEMA LIKE '%%'
 //http://localhost:3000/files/SCHEMA/?library=WRK
-router.get("/SCHEMA", (req, res, next) => {
+router.get("/SCHEMA", async (req, res, next) => {
     var q = req.query;
 
-    pool_upd = getPool(req.query.as)
+    pool_upd = await pool(req.query.userDb, req.query.as)
     console.log("#####################: " + req.query.as + "\n");
 
     pool_upd
@@ -262,16 +328,18 @@ router.get("/SCHEMA", (req, res, next) => {
 
 //SELECT DISTINCT(TABLE_SCHEMA) FROM QSYS2.SYSTABLES WHERE TABLE_SCHEMA LIKE '%%'
 //http://localhost:3000/files/SCHEMA/?library=WRK
-router.get("/inserOrUpdatePref", (req, res, next) => {
+router.get("/inserOrUpdatePref", async (req, res, next) => {
     var q = req.query;
 
-    pool.wrk
+    pool_upd = await pool("fake", "fake")
+
+    pool_upd
         .query(
             "SELECT * FROM WRKTOMMAL.DB_HELPER WHERE LIBDAT = '" +
             q.libdat.toUpperCase() +
             "' AND ip='" + q.as + "'"
         )
-        .then((result) => {
+        .then(async (result) => {
             var sql = "INSERT INTO WRKTOMMAL.DB_HELPER VALUES('" + q.libdat.toUpperCase() + "','" + q.PREFL1.toUpperCase() + "', '" + q.PREFL2.toUpperCase() +
                 "', '" + q.PREFL3.toUpperCase() + "', '" + q.PREFL4.toUpperCase() + "', '" + q.PREFL5.toUpperCase() + "', 'no', '" + q.as + "') "
 
@@ -281,8 +349,8 @@ router.get("/inserOrUpdatePref", (req, res, next) => {
                     q.libdat.toUpperCase() +
                     "' AND ip = '" + q.as + "'"
             }
-
-            pool.wrk
+            pool_upd = await pool("fake", "fake")
+            pool_upd
                 .update(
                     sql, []
                 )
@@ -307,12 +375,13 @@ router.get("/inserOrUpdatePref", (req, res, next) => {
 
 
 
-router.get("/selectUserQuery", (req, res, next) => {
+router.get("/selectUserQuery", async (req, res, next) => {
     var q = req.query;
 
     console.log("GET: " + q.libdat.toUpperCase() + "\n");
 
-    pool.wrk
+    pool_upd = await pool("fake", "fake")
+    pool_upd
         .query(
             "SELECT * FROM WRKTOMMAL.DB_QUERIES WHERE LIBDAT = '" +
             q.libdat.toUpperCase() +
@@ -333,18 +402,19 @@ router.get("/selectUserQuery", (req, res, next) => {
 
 //SELECT DISTINCT(TABLE_SCHEMA) FROM QSYS2.SYSTABLES WHERE TABLE_SCHEMA LIKE '%%'
 //http://localhost:3300/files/inserOrUpdateUserQuery/?libdat=WRKTOMMAL&title=miotitolo&sqlstr=select * from WRKTOMMAL.db_helper&note=mia nota
-router.get("/inserOrUpdateUserQuery", (req, res, next) => {
+router.get("/inserOrUpdateUserQuery", async (req, res, next) => {
     var q = req.query;
 
-    pool.wrk
+    pool_upd = await pool("fake", "fake")
+    pool_upd
         .query(
             "SELECT * FROM WRKTOMMAL.DB_QUERIES WHERE LIBDAT = '" +
             q.libdat.toUpperCase() +
             "' AND TITLE='" + q.title + "'"
         )
-        .then((result) => {
+        .then(async (result) => {
             var sql = "INSERT INTO WRKTOMMAL.DB_QUERIES VALUES('" + q.libdat.toUpperCase() + "','" + q.title + "', '" + q.sqlstr.replace(new RegExp("'", 'g'), "`") +
-                "', '" + q.note + "' , 'N', 'no', '"+  q.as + "')"
+                "', '" + q.note + "' , 'N', 'no', '" + q.as + "')"
 
             if (result.length > 0) {
                 sql = "UPDATE WRKTOMMAL.DB_QUERIES SET SQLSTR = '" + q.sqlstr.replace(new RegExp("'", 'g'), "`") + "', TITLE = '" + q.title +
@@ -355,7 +425,8 @@ router.get("/inserOrUpdateUserQuery", (req, res, next) => {
                 console.log(q.sqlst)
             }
 
-            pool.wrk
+            pool_upd = await pool("fake", "fake")
+            pool_upd
                 .update(
                     sql, []
                 )
@@ -377,12 +448,13 @@ router.get("/inserOrUpdateUserQuery", (req, res, next) => {
 });
 
 
-router.get("/deleteUserQuery", (req, res, next) => {
+router.get("/deleteUserQuery", async (req, res, next) => {
     var q = req.query;
 
     console.log("GET: " + q.libdat.toUpperCase() + "\n");
 
-    pool.wrk
+    pool_upd = await pool("fake", "fake")
+    pool_upd
         .update('DELETE FROM WRKTOMMAL.DB_QUERIES WHERE LIBDAT=? AND TITLE = ? AND ip = ?', [q.libdat.toUpperCase(), q.title, q.as])
         .then(nUpdated => {
             console.log('Deleted ' + nUpdated + ' rows');
@@ -395,7 +467,7 @@ router.get("/deleteUserQuery", (req, res, next) => {
 
 
 
-router.get("/updateStatusPref", (req, res, next) => {
+router.get("/updateStatusPref", async (req, res, next) => {
     var q = req.query;
 
     console.log("PREF: " + q.pref.toUpperCase() + "\n");
@@ -406,7 +478,8 @@ router.get("/updateStatusPref", (req, res, next) => {
     console.log("ip: " + q.as + "\n");
 
 
-    pool.wrk
+    pool_upd = await pool("fake", "fake")
+    pool_upd
         .update('UPDATE WRKTOMMAL.DB_QUERIES SET PREF = ? WHERE LIBDAT=? AND TITLE = ? AND ip = ?', [q.pref.toUpperCase(), q.libdat.toUpperCase(), q.title, q.as])
         .then(nUpdated => {
             console.log('UPDATED ' + nUpdated + ' rows');
@@ -424,18 +497,18 @@ router.get("/updateStatusPref", (req, res, next) => {
 
 //SELECT * FROM QSYS2.SYSTABLES WHERE TABLE_SCHEMA='WRKTOMMAL'
 //http://10.100.0.30:3300/files/FILENAMES/?library=WRKTOMMAL
-router.get("/FILENAMES", (req, res, next) => {
+router.get("/FILENAMES", async (req, res, next) => {
     var q = req.query;
 
     console.log(req.query.as)
 
-    pool_upd =  getPool(req.query.as)
+    pool_upd = await pool(req.query.userDb, req.query.as)
 
-  //  console.log("GET: " + q.library.toUpperCase() + "\n");
-  pool_upd
+    //  console.log("GET: " + q.library.toUpperCase() + "\n");
+    pool_upd
         .query(
             "SELECT TABLE_NAME, TABLE_TEXT FROM QSYS2.SYSTABLES WHERE TABLE_SCHEMA='" +
-           ("" + q.library).toUpperCase().trim() +
+            ("" + q.library).toUpperCase().trim() +
             "'"
         )
         .then((result) => {
@@ -450,11 +523,12 @@ router.get("/FILENAMES", (req, res, next) => {
 
 //SELECT * FROM QSYS2.SYSTABLES WHERE TABLE_SCHEMA='WRKTOMMAL'
 //http://10.100.0.30:3300/files/USERPREF/?user=WRKTOMMAL
-router.get("/USERPREF", (req, res, next) => {
+router.get("/USERPREF", async (req, res, next) => {
     var q = req.query;
 
     console.log("GET: " + q.user.toUpperCase() + "\n");
-    pool.wrk
+    pool_upd = await pool("fake", "fake")
+    pool_upd
         .query(
             "SELECT * FROM WRKTOMMAL.DB_HELPER WHERE LIBDAT='" +
             q.user.toUpperCase().trim() +

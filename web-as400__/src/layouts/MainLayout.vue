@@ -2,31 +2,14 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated class="q-py-sm">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          <Voice></Voice>
+          <!-- <Voice></Voice> -->
         </q-toolbar-title>
 
-        <q-select
-          style="max-width: 250px"
-          class="q-mr-md"
-          v-model="modelId"
-          use-input
-          input-debounce="0"
-          label="IP"
-          label-color="white"
-          :options="optionsIp"
-          @update:model-value="setIp"
-          behavior="menu"
-        >
+        <q-select style="max-width: 400px" class="q-mr-md" v-model="modelId" use-input input-debounce="0" label="IP"
+          label-color="white" :options="optionsIp" @update:model-value="setIp" behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -38,19 +21,8 @@
           </template>
         </q-select>
 
-        <q-select
-          style="max-width: 250px"
-          class="q-mr-xl"
-          v-model="model"
-          use-input
-          input-debounce="0"
-          label="PROFILO"
-          label-color="white"
-          :options="options"
-          @filter="filterFn"
-          @update:model-value="onClickLibdat"
-          behavior="menu"
-        >
+        <q-select style="max-width: 250px" class="q-mr-xl" v-model="model" use-input input-debounce="0" label="PROFILO"
+          label-color="white" :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -73,12 +45,7 @@
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
         <q-separator class="q-my-md" />
-        <EssentialLink
-          class="q-mt-md text-overline"
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <EssentialLink class="q-mt-md text-overline" v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
       <q-separator style="margin-bottom: 150px" />
 
@@ -88,19 +55,9 @@
           <span class="material-icons"> star_rate </span>
         </q-avatar>
       </q-item-label>
-      <q-list
-        bordered
-        separator
-        class="text-primary text-subtitle2"
-        style="max-height: 800px; overflow: auto"
-      >
-        <q-item
-          @click="exec(item.SQLSTR)"
-          dense
-          v-for="item in queryStr.getQueriesPrefered"
-          clickable
-          :key="item.SQLSTR"
-        >
+      <q-list bordered separator class="text-primary text-subtitle2" style="max-height: 800px; overflow: auto">
+        <q-item @click="exec(item.SQLSTR)" dense v-for="item in queryStr.getQueriesPrefered" clickable
+          :key="item.SQLSTR">
           <q-item dense>
             <q-item-section>
               <q-avatar size="26px">
@@ -176,12 +133,10 @@ export default defineComponent({
     const stringOptions = ref([]);
     const options = ref([]);
     const optionsIp = ref([
-      "10.200.100.160",
-      "10.200.100.188",
-      "10.200.100.130",
-      "10.0.17.131",
+      "10.200.100.160 wrktommal",
+
     ]);
-    const modelId = ref("10.200.100.160");
+    const modelId = ref("10.200.100.160 wrktommal");
     const as = useStore();
     const pref = prefStore();
 
@@ -191,7 +146,7 @@ export default defineComponent({
 
     const exec = async (sql) => {
       queryStr.loadingTable = true;
-      await queryStr.excecQuery(sql);
+      await queryStr.excecQuery( q.localStorage.getItem("currentUser") ,sql);
       queryStr.loadingTable = false;
       queryStr.launchQueryPrefered = true;
     };
@@ -213,9 +168,13 @@ export default defineComponent({
     };
 
     const onClickLibdat = (rr) => {
-      //  this.loadFilenames();
+
+
+
       as.setCurrentUser(model.value);
       q.localStorage.set("currentUser", model.value);
+
+
       pref.setUserPref(model.value);
       // q.$router.push({name: 'myPath'})
 
@@ -223,6 +182,12 @@ export default defineComponent({
       //router.push('/home')
       if (q.localStorage.getItem("currentUser") != "null") location.reload();
       else q.localStorage.remove("currentUser");
+
+
+
+
+
+
     };
 
     const loadUserPrefs = () => {
@@ -282,13 +247,27 @@ export default defineComponent({
 
     const loadIps = () => {
       if (!q.localStorage.getItem("as")) {
-        q.localStorage.set("as", modelId.value);
-      } else modelId.value = q.localStorage.getItem("as");
+
+       const str = modelId.value
+      const  ip = str.substring(0, str.indexOf(' ')); // "72"
+    const    userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
+
+        q.localStorage.set("as", ip);
+        q.localStorage.set("userDb", userDb);
+      } else { 
+        modelId.value = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb") 
+      }
     };
 
     const setIp = () => {
-      q.localStorage.set("as", modelId.value);
-      q.localStorage.remove("currentUser");
+
+     const str = modelId.value
+      const  ip = str.substring(0, str.indexOf(' ')); // "72"
+     const   userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
+
+        q.localStorage.set("as", ip);
+        q.localStorage.set("userDb", userDb);
+      q.localStorage.set("currentUser", userDb.toUpperCase().trim());
       location.reload();
     };
 
@@ -299,6 +278,20 @@ export default defineComponent({
 
     const loadUserQueries = async () => {
       await queryStr.selectUserQuery(q.localStorage.getItem("currentUser"));
+    };
+
+    const loadUserIps = async () => {
+      try {
+
+        await as.getIpsAction();
+
+        as.getUserIps.forEach((element) => {
+          optionsIp.value.push(element.CLIEIP + " " + element.USERDB);
+          console.log(element.CLIEIP)
+        });
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     return {
@@ -316,6 +309,7 @@ export default defineComponent({
       model,
       options,
       stringOptions,
+      optionsIp,
       onClickLibdat,
       loadUsers,
       loadUserPrefs,
@@ -327,10 +321,14 @@ export default defineComponent({
       loadIps,
       q,
       queryStr,
+      loadUserIps
     };
   },
 
   mounted() {
+
+    this.loadUserIps()
+
     this.loadIps();
     this.loadDarkMode();
     this.loadUserPrefs();
@@ -341,4 +339,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
 </style>

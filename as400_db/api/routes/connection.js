@@ -1,43 +1,49 @@
 const configWork = {
     host: '10.200.100.160',
-    user: 'WRKJEXP',
-    password: 'WRKJEXP',
-}
-
-const config188 = {
-    host: '10.200.100.188',
-    user: 'nsetommal',
-    password: 'tommal1',
-}
-
-
-const config130 = {
-    host: '10.200.100.130',
-    user: 'andvic',
-    password: 'andvic',
-}
-
-const configBertin = {
-    host: '10.0.17.131',
-    user: 'beradmin9',
-    password: 'adminber',
+    user: 'wrktommal',
+    password: 'tommal',
 }
 
 
 
-const poolWrk = require('node-jt400').pool(configWork);
-const poolNse = require('node-jt400').pool(config188);
-const pool130 = require('node-jt400').pool(config130);
+const as400 = require('node-jt400')
 
-const poolBer = require('node-jt400').pool(configBertin);
+const poolWrk = as400.pool(configWork);
 
 
-const allPool = {
-    wrk: poolWrk,
-    nse: poolNse,
-    as130: pool130,
-    bertin: poolBer
+
+getCustomPool = function (userDb, clientIp) {
+
+
+
+    return poolWrk.query("SELECT * FROM WRKTOMMAL.DB_IPS WHERE USERDB = ? AND CLIEIP = ? ", [
+        userDb, clientIp
+    ])
+        .then(result => {
+
+            if (result.length > 0) {
+
+                return as400.pool({
+                    host: result[0].CLIEIP,
+                    user: result[0].USERDB,
+                    password: result[0].PASSDB
+                })
+            }
+            else return as400.pool(configWork
+            )
+
+        })
+
+
+
 }
 
 
-module.exports = allPool
+
+// const allPool = {
+//     wrk: poolWrk
+
+// }
+
+
+module.exports = getCustomPool

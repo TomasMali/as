@@ -7,12 +7,14 @@ export const prefStore = defineStore("pref", {
     state: () => {
         return {
             userPref: [],
-            insertOrDeleteStatus: null
+            insertOrDeleteStatus: null,
+            statusConnection: null
         };
     },
     getters: {
         getUserPref: (state) => state.userPref,
         getInsertOrDeleteStatus: (state) => state.insertOrDeleteStatus,
+        getStatusConnection: (state) => state.statusConnection,
         getUserPrefAsObj: (state) => {
             if (state.userPref.length < 1) {
                 return [];
@@ -105,5 +107,40 @@ export const prefStore = defineStore("pref", {
 
             this.insertOrDeleteStatus = responseData;
         },
+
+        async insertConnectionPrefs(pref) {
+            let url = "http://" + window.location.hostname + ":3300/files/insertConnection"
+
+            const response = await fetch(url, {
+                method: "POST",
+                body: JSON.stringify(pref),
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                enctype: "mutipart/form-data",
+            });
+
+
+            const responseData = await response.json();
+
+
+            if (!response.ok) {
+
+                if (response.status === 404) {
+                    this.statusConnection = responseData.error
+                    throw new Error(responseData.error);
+                } else if (response.status === 403){
+                    this.statusConnection = responseData.error
+                 throw new Error(responseData.error);
+                }
+            }
+            else
+            this.statusConnection = responseData.message;
+        },
+
     },
 });
