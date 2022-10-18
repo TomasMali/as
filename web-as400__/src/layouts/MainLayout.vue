@@ -8,8 +8,8 @@
           <!-- <Voice></Voice> -->
         </q-toolbar-title>
 
-        <q-select style="max-width: 400px" class="q-mr-md" v-model="modelId" use-input input-debounce="0" label="IP"
-          label-color="white" :options="optionsIp" @update:model-value="setIp" behavior="menu">
+        <q-select  class="q-mr-md" v-model="modelId" use-input input-debounce="0" label="IP"
+          label-color="white" :options="optionsIp" @filter="filterIp" @update:model-value="setIp" behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -132,11 +132,14 @@ export default defineComponent({
     const model = ref(null);
     const stringOptions = ref([]);
     const options = ref([]);
+
+
+    const stringOptionsIp = ref([])
     const optionsIp = ref([
-      "10.200.100.160 wrktommal",
+      "10.200.100.160 wrktommal"
 
     ]);
-    const modelId = ref("10.200.100.160 wrktommal");
+    const modelId = ref(["10.200.100.160 wrktommal"]);
     const as = useStore();
     const pref = prefStore();
 
@@ -146,7 +149,7 @@ export default defineComponent({
 
     const exec = async (sql) => {
       queryStr.loadingTable = true;
-      await queryStr.excecQuery( q.localStorage.getItem("currentUser") ,sql);
+      await queryStr.excecQuery(q.localStorage.getItem("currentUser"), sql);
       queryStr.loadingTable = false;
       queryStr.launchQueryPrefered = true;
     };
@@ -162,6 +165,24 @@ export default defineComponent({
       update(() => {
         const needle = val.toLowerCase();
         options.value = stringOptions.value.filter(
+          (v) => v.toLowerCase().indexOf(needle) > -1
+        );
+      });
+    };
+
+
+
+    const filterIp = (val, update) => {
+      if (val === "") {
+        update(() => {
+          optionsIp.value = stringOptionsIp.value;
+        });
+        return;
+      }
+
+      update(() => {
+        const needle = val.toLowerCase();
+        optionsIp.value = stringOptionsIp.value.filter(
           (v) => v.toLowerCase().indexOf(needle) > -1
         );
       });
@@ -248,25 +269,25 @@ export default defineComponent({
     const loadIps = () => {
       if (!q.localStorage.getItem("as")) {
 
-       const str = modelId.value
-      const  ip = str.substring(0, str.indexOf(' ')); // "72"
-    const    userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
+        const str = modelId.value
+        const ip = str.substring(0, str.indexOf(' ')); // "72"
+        const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
 
         q.localStorage.set("as", ip);
         q.localStorage.set("userDb", userDb);
-      } else { 
-        modelId.value = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb") 
+      } else {
+        modelId.value = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb")
       }
     };
 
     const setIp = () => {
 
-     const str = modelId.value
-      const  ip = str.substring(0, str.indexOf(' ')); // "72"
-     const   userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
+      const str = modelId.value
+      const ip = str.substring(0, str.indexOf(' ')); // "72"
+      const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
 
-        q.localStorage.set("as", ip);
-        q.localStorage.set("userDb", userDb);
+      q.localStorage.set("as", ip);
+      q.localStorage.set("userDb", userDb);
       q.localStorage.set("currentUser", userDb.toUpperCase().trim());
       location.reload();
     };
@@ -287,7 +308,9 @@ export default defineComponent({
 
         as.getUserIps.forEach((element) => {
           optionsIp.value.push(element.CLIEIP + " " + element.USERDB);
-          console.log(element.CLIEIP)
+
+          stringOptionsIp.value.push(element.CLIEIP + " " + element.USERDB);
+    
         });
       } catch (error) {
         console.log(error);
@@ -305,11 +328,11 @@ export default defineComponent({
       toggleDark,
       loadDarkMode,
       filterFn,
+
       exec,
       model,
       options,
       stringOptions,
-      optionsIp,
       onClickLibdat,
       loadUsers,
       loadUserPrefs,
@@ -318,10 +341,12 @@ export default defineComponent({
       pref,
       optionsIp,
       modelId,
+      filterIp,
       loadIps,
       q,
       queryStr,
-      loadUserIps
+      loadUserIps,
+      stringOptionsIp
     };
   },
 
