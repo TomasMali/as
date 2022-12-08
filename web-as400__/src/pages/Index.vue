@@ -146,6 +146,7 @@
       :rows-per-page-options="[0, 8, 18]"
       style="height: 640px"
       :filter="filter"
+      ref="tb"
     >
     <template v-slot:loading>
         <q-inner-loading showing color="primary" />
@@ -385,10 +386,7 @@ export default {
       // naive encoding to csv format
       const content = [this.columns.map((col) => this.wrapCsvValue(col.label))]
         .concat(
-
-
-        
-          this.rows.map((row) =>
+          this.$refs.tb.filteredSortedRows.map((row) =>
             this.columns
               .map((col) =>
                 this.wrapCsvValue(
