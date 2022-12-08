@@ -4,11 +4,11 @@
       <q-card-section class="">
         <div class="row q-mb-md">
           <div
-            class="col q-mr-md"
+            class="col q-mr-md "
             style="border-style: ridge"
             v-if="pref.getUserPrefAsObj.length > 0"
           >
-            <q-option-group
+            <q-option-group class="q-mt-md"
               v-model="group"
               @update:model-value="onGroupChange"
               :options="pref.getUserPrefAsObj"
@@ -152,15 +152,15 @@
       </template>
       
       <template v-slot:top-right>
+        <q-icon name="search" size="sm" class="q-mr-sm" color="white" />
         <q-input
+        class=" "
           borderless
           dense
-          debounce="300"
           v-model="filter"
           placeholder="Search word"
         >
           <template v-slot:append>
-            <q-icon name="search" color="white" />
             <q-toggle v-model="grid" color="red" label="Grid" />
           </template>
         </q-input>
@@ -385,6 +385,9 @@ export default {
       // naive encoding to csv format
       const content = [this.columns.map((col) => this.wrapCsvValue(col.label))]
         .concat(
+
+
+        
           this.rows.map((row) =>
             this.columns
               .map((col) =>
@@ -724,7 +727,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang="sass" >
 .scritta .q-toggle div.q-toggle__label.q-anchor--skip
   color: #673BB6
 
@@ -746,6 +749,11 @@ export default {
     z-index: 1
   thead tr:first-child th
     top: 0
+
+  input
+   color: white
+   font-size: 20px
+   margin-right: 250px
 
   /* this is when the loading indicator appears */
   &.q-table--loading thead tr:last-child th

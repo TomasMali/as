@@ -8,8 +8,8 @@
           <!-- <Voice></Voice> -->
         </q-toolbar-title>
 
-        <q-select  class="q-mr-md" v-model="modelId" use-input input-debounce="0" label="IP"
-          label-color="white" :options="optionsIp" @filter="filterIp" @update:model-value="setIp" behavior="menu">
+        <q-select  class="q-mr-md select-color" style=" max-width:310px" v-model="modelId" use-input input-debounce="0" label="IP"
+          label-color="yellow" :options="optionsIp" @filter="filterIp" @update:model-value="setIp" behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -21,8 +21,8 @@
           </template>
         </q-select>
 
-        <q-select style="max-width: 250px" class="q-mr-xl" v-model="model" use-input input-debounce="0" label="PROFILO"
-          label-color="white" :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
+        <q-select style="max-width: 250px;" class="q-mr-xl" v-model="model" use-input input-debounce="0" label="PROFILO"
+          label-color="yellow" :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -41,33 +41,37 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered >
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header > Essential Links </q-item-label>
         <q-separator class="q-my-md" />
         <EssentialLink class="q-mt-md text-overline" v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
-      <q-separator style="margin-bottom: 150px" />
+      <q-separator style="margin-top: 36px" />
 
-      <q-item-label header>
+
+      <q-item-label header class="q-mt-lg">
         Query preferite
-        <q-avatar class="q-ml-md" size="26px" color="orange">
+        <q-avatar class="q-ml-md " size="26px" color="orange">
           <span class="material-icons"> star_rate </span>
         </q-avatar>
       </q-item-label>
+
+
       <q-list bordered separator class="text-primary text-subtitle2" style="max-height: 800px; overflow: auto">
+
         <q-item @click="exec(item.SQLSTR)" dense v-for="item in queryStr.getQueriesPrefered" clickable
           :key="item.SQLSTR">
           <q-item dense>
             <q-item-section>
-              <q-avatar size="26px">
+              <q-avatar size="20px">
                 <span class="material-icons"> play_circle </span>
               </q-avatar>
             </q-item-section>
           </q-item>
 
           <q-item-section>
-            <div class="text-overline" style="font-size: small">
+            <div class="text-overline" style="font-size: 10px">
               {{ item.TITLE }}
             </div>
           </q-item-section>
@@ -139,7 +143,7 @@ export default defineComponent({
       "10.200.100.160 wrktommal"
 
     ]);
-    const modelId = ref(["10.200.100.160 wrktommal"]);
+    const modelId = ref(["10.200.100.160 WRKTOMMAL"]);
     const as = useStore();
     const pref = prefStore();
 
@@ -269,14 +273,16 @@ export default defineComponent({
     const loadIps = () => {
       if (!q.localStorage.getItem("as")) {
 
-        const str = modelId.value
+        const str = modelId.value[0]
         const ip = str.substring(0, str.indexOf(' ')); // "72"
         const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
 
         q.localStorage.set("as", ip);
-        q.localStorage.set("userDb", userDb);
+        q.localStorage.set("userDb", userDb.toUpperCase());
+        model.value = q.localStorage.getItem("userDb").toUpperCase()
       } else {
-        modelId.value = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb")
+        modelId.value[0] = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb").toUpperCase()
+    
       }
     };
 
@@ -286,14 +292,19 @@ export default defineComponent({
       const ip = str.substring(0, str.indexOf(' ')); // "72"
       const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
 
+      console.log("User ", userDb)
+
       q.localStorage.set("as", ip);
       q.localStorage.set("userDb", userDb);
       q.localStorage.set("currentUser", userDb.toUpperCase().trim());
+
       location.reload();
     };
 
     const loadDarkMode = () => {
       dark.value = q.localStorage.getItem("darkMode");
+      if(dark.value == undefined || dark.value == null)
+      dark.value = false
       q.dark.set(dark.value);
     };
 
@@ -359,10 +370,14 @@ export default defineComponent({
     this.loadUserPrefs();
     this.loadUsers();
     this.loadUserQueries();
+  
   },
 });
 </script>
 
-<style scoped>
+<style  >
+
 
 </style>
+
+
