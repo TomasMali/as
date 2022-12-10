@@ -3,111 +3,46 @@
     <q-card bordered class="q-my-sm q-mx-md">
       <q-card-section class="">
         <div class="row q-mb-md">
-          <div
-            class="col q-mr-md "
-            style="border-style: ridge"
-            v-if="pref.getUserPrefAsObj.length > 0"
-          >
-            <q-option-group class="q-mt-md"
-              v-model="group"
-              @update:model-value="onGroupChange"
-              :options="pref.getUserPrefAsObj"
-              color="primary"
-              inline
-            />
+          <div class="col q-mr-md " style="border-style: ridge" v-if="pref.getUserPrefAsObj.length > 0">
+            <q-option-group class="q-mt-md" v-model="group" @update:model-value="onGroupChange"
+              :options="pref.getUserPrefAsObj" color="primary" inline />
           </div>
 
           <div class="col flex q-pa-md" style="border-style: ridge">
-            <q-input
-              dense
-              style="width: 170px"
-              square
-              color="primary"
-              label-color="primary"
-              outlined
-              clearable
-              v-model="fastWordSearch"
-              label="Fast Search"
-            >
+            <q-input dense style="width: 170px" square color="primary" label-color="primary" outlined clearable
+              v-model="fastWordSearch" label="Fast Search">
               <template v-slot:append>
                 <q-icon name="bolt" color="primary" />
               </template>
             </q-input>
 
-            <q-btn
-              dense
-              :loading="loading"
-              inline
-              color="primary q-ml-sm"
-              label="Search"
-              icon-right="send"
-              @click="fastSearch"
-              :disable="
+            <q-btn dense :loading="loading" inline color="primary q-ml-sm" label="Search" icon-right="send"
+              @click="fastSearch" :disable="
                 fastWordSearch == null ||
                 fastWordSearch == '' ||
                 fastWordSearch.length < 3
-              "
-            />
-            <q-checkbox
-              dense
-              class="q-ml-xl"
-              size="lg"
-              left-label
-              v-model="searchFile"
-              label="Cerca File"
-            />
+              " />
+            <q-checkbox dense class="q-ml-xl" size="lg" left-label v-model="searchFile" label="Cerca File" />
 
-            <q-checkbox
-              dense
-              class="q-ml-xl"
-              size="lg"
-              left-label
-              v-model="deep"
-              label="Ricerca profonda"
-            />
+            <q-checkbox dense class="q-ml-xl" size="lg" left-label v-model="deep" label="Ricerca profonda" />
 
             <!-- <Voice @onVoice="voiceChanged"></Voice> -->
           </div>
         </div>
 
         <div class="row q-pa-md" style="border-style: ridge">
-          <q-select
-            dense
-            filled
-            v-model="model"
-            use-input
-            input-debounce="0"
-            label="LIBDAT"
-            clearable
-            :options="options"
-            @filter="filterFn"
-            @update:model-value="onClickLibdat"
-            behavior="menu"
-          >
+          <q-select dense filled v-model="model" use-input input-debounce="0" label="LIBDAT" clearable
+            :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
               </q-item>
             </template>
           </q-select>
-          <q-select
-            class="q-ml-md"
-            style="max-height: 500px"
-            dense
-            filled
-            v-model="fileNameModel"
-            use-input
-            :loading="loadingInputFiles"
-            :disable="loadingInputFiles"
-            input-debounce="0"
-            label="FILE"
-            autofocus
-            clearable
-            :options="fileNamesOptions"
-            @filter="filterFileNames"
-            @update:model-value="onClickFilename"
-            behavior="menu"
-          >
+          <q-select class="q-ml-md" style="max-height: 500px" dense filled v-model="fileNameModel" use-input
+            :loading="loadingInputFiles" :disable="loadingInputFiles" input-debounce="0" label="FILE" autofocus
+            clearable :options="fileNamesOptions" @filter="filterFileNames" @update:model-value="onClickFilename"
+            behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
@@ -115,140 +50,75 @@
             </template>
           </q-select>
           <div class="q-ml-lg scritta">
-            <q-toggle
-              dense
-              v-model="queryToggle"
-              size="xl"
-              icon="visibility"
-              label="Show 500"
-              color="red"
-            />
+            <q-toggle dense v-model="queryToggle" size="xl" icon="visibility" label="Show 500" color="red" />
           </div>
         </div>
       </q-card-section>
     </q-card>
     <!-- Table 1 -->
-    <q-table
-    :loading="loadingTable"
-      v-if="!queryToggle && !queryStr.launchQueryPrefered"
-      dense
-      auto-width
-      class="text-subtitle2 my-sticky-header-table"
-      table-header-class="text-white"
-      :grid="grid"
-      :rows="rows"
-      :columns="columns"
-      row-key="name"
-      boarderd
-      :title="fileNameModel"
-      separator="cell"
-      :rowsPerPage="30"
-      :rows-per-page-options="[0, 8, 18]"
-      style="height: 640px"
-      :filter="filter"
-      ref="tb"
-    >
-    <template v-slot:loading>
-        <q-inner-loading showing color="primary" />
-      </template>
-      
-      <template v-slot:top-right>
-        <q-icon name="search" size="sm" class="q-mr-sm" color="white" />
-        <q-input
-        class=" "
-          borderless
-          dense
-          v-model="filter"
-          placeholder="Search word"
-        >
-          <template v-slot:append>
-            <q-toggle v-model="grid" color="red" label="Grid" />
-          </template>
-        </q-input>
-
-        <q-btn
-          flat
-          class="q-ml-xl"
-          color="yellow"
-          icon-right="archive"
-          label="Export to csv"
-          no-caps
-          @click="exportTable"
-        />
-      </template>
-    </q-table>
-    <!-- Table 2 -->
-    <q-table
-      class="text-subtitle2 my-sticky-header-table"
-      table-header-class="text-white"
-      v-else-if="queryToggle && !queryStr.launchQueryPrefered"
-      :rows="queries"
-      row-key="index"
-      dense
-      auto-width
-      :grid="grid"
-      :loading="loading"
-      boarderd
-      :title="fileNameModel"
-      separator="cell"
-      style="height: 640px"
-      :filter="filter"
-      :rowsPerPage="10000"
-      :rows-per-page-options="[0, 8, 18]"
-    >
- 
-
-      <template v-slot:top-right>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
-        >
-          <template v-slot:append>
-            <q-icon name="search" color="white" />
-            <q-toggle v-model="grid" color="red" label="Grid" />
-          </template>
-        </q-input>
-      </template>
-    </q-table>
-    <!-- Table 3 -->
-    <q-table
-      v-else-if="queryStr.queries.length"
-      :loading="queryStr.loadingTable"
-      class="text-subtitle2 my-sticky-header-table"
-      table-header-class="text-white"
-      title="Risultati query"
-      dense
-      boarderd
-      auto-width
-      separator="cell"
-      :rows="queryStr.queries"
-      row-key="name"
-      :rowsPerPage="30"
-      :rows-per-page-options="[0, 8, 18]"
-      style="height: 640px"
-      :filter="queryStr.filter"
-      :grid="queryStr.grid"
-    >
+    <q-table :loading="loadingTable" v-if="!queryToggle && !queryStr.launchQueryPrefered" dense auto-width
+      class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" :grid="grid" :rows="rows"
+      :columns="columns" row-key="name" boarderd :title="fileNameModel" separator="cell" :rowsPerPage="30"
+      :rows-per-page-options="[0, 8, 18]" style="height: 640px" :filter="filter" ref="tb">
       <template v-slot:loading>
         <q-inner-loading showing color="primary" />
       </template>
 
       <template v-slot:top-right>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="queryStr.filter"
-          placeholder="Search word"
-        >
+        <q-icon name="search" size="sm" class="q-mr-sm" color="white" />
+        <q-input class=" " borderless dense v-model="filter" placeholder="Search word">
+          <template v-slot:append>
+            <q-toggle v-model="grid" color="red" label="Grid" />
+          </template>
+        </q-input>
+
+        <q-btn flat class="q-ml-xl" color="yellow" icon-right="archive" label="Export to csv" no-caps
+          @click="exportTable" />
+      </template>
+    </q-table>
+    <!-- Table 2 -->
+    <q-table class="text-subtitle2 my-sticky-header-table" table-header-class="text-white"
+      v-else-if="queryToggle && !queryStr.launchQueryPrefered" :rows="queries" row-key="index" dense auto-width
+      :grid="grid" :loading="loading" boarderd :title="fileNameModel" separator="cell" style="height: 640px"
+      :filter="filter" :rowsPerPage="10000" :rows-per-page-options="[0, 8, 18]" ref="tabCol">
+
+
+      <template v-slot:top-right>
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+          <template v-slot:append>
+            <q-icon name="search" color="white" />
+            <q-toggle v-model="grid" color="red" label="Grid" />
+          </template>
+        </q-input>
+
+
+
+        <q-btn flat class="q-ml-xl" color="yellow" icon-right="archive" label="Export to csv" no-caps
+          @click="exportTableField" />
+
+
+
+      </template>
+    </q-table>
+    <!-- Table 3 -->
+    <q-table v-else-if="queryStr.queries.length" :loading="queryStr.loadingTable"
+      class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" title="Risultati query" dense
+      boarderd auto-width separator="cell" :rows="queryStr.queries" row-key="name" :rowsPerPage="30"
+      :rows-per-page-options="[0, 8, 18]" style="height: 640px" :filter="queryStr.filter" :grid="queryStr.grid"
+      ref="queryTab">
+      <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
+
+      <template v-slot:top-right>
+        <q-input borderless dense debounce="300" v-model="queryStr.filter" placeholder="Search word">
           <template v-slot:append>
             <q-icon name="search" color="white" />
             <q-toggle color="red" v-model="queryStr.grid" label="Grid" />
           </template>
         </q-input>
+        <q-btn flat class="q-ml-xl" color="yellow" icon-right="archive" label="Export to csv" no-caps
+          @click="exportTableQuery" />
       </template>
     </q-table>
 
@@ -404,6 +274,85 @@ export default {
       if (status !== true) {
       }
     },
+
+
+    exportTableField() {
+      var columsObj = []
+      console.log(this.$refs.tabCol.filteredSortedRows.length)
+      if (this.$refs.tabCol.filteredSortedRows.length > 0)
+        columsObj = Object.getOwnPropertyNames(this.$refs.tabCol.filteredSortedRows[0])
+
+      var columsTable = []
+
+      columsObj.forEach(x => {
+        columsTable.push({
+          field: x,
+          name: x,
+          label: x
+        })
+      })
+
+      const content = [columsTable.map((col) => this.wrapCsvValue(col.label))]
+        .concat(
+          this.$refs.tabCol.filteredSortedRows.map((row) =>
+            columsTable
+              .map((col) =>
+                this.wrapCsvValue(
+                  typeof col.field === "function"
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format
+                )
+              )
+              .join(",")
+          )
+        )
+        .join("\r\n");
+      const status = exportFile("table-export.csv", content, "text/csv");
+      if (status !== true) {
+      }
+    },
+
+
+    exportTableQuery() {
+      var columsObj = []
+      console.log(this.$refs.queryTab.filteredSortedRows.length)
+      if (this.$refs.queryTab.filteredSortedRows.length > 0)
+        columsObj = Object.getOwnPropertyNames(this.$refs.queryTab.filteredSortedRows[0])
+
+      var columsTable = []
+
+      columsObj.forEach(x => {
+        columsTable.push({
+          field: x,
+          name: x,
+          label: x
+        })
+      })
+
+
+      const content = [columsTable.map((col) => this.wrapCsvValue(col.label))]
+        .concat(
+          this.$refs.queryTab.filteredSortedRows.map((row) =>
+            columsTable
+              .map((col) =>
+                this.wrapCsvValue(
+                  typeof col.field === "function"
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format
+                )
+              )
+              .join(",")
+          )
+        )
+        .join("\r\n");
+      const status = exportFile("table-export.csv", content, "text/csv");
+      if (status !== true) {
+      }
+    },
+
+
     wrapCsvValue(val, formatFn) {
       let formatted = formatFn !== void 0 ? formatFn(val) : val;
       formatted =
@@ -515,7 +464,7 @@ export default {
           const data = {
             user:
               this.q.localStorage.getItem("currentUser") != null &&
-              this.q.localStorage.getItem("currentUser") != ""
+                this.q.localStorage.getItem("currentUser") != ""
                 ? this.q.localStorage.getItem("currentUser").trim()
                 : "",
             search_word: this.fastWordSearch.trim(),
