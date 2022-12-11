@@ -3,7 +3,7 @@
     <q-card bordered class="q-my-sm q-mx-md">
       <q-card-section class="">
         <div class="row q-mb-md">
-          <div class="col q-mr-md " style="border-style: ridge" v-if="pref.getUserPrefAsObj.length > 0">
+          <div class="col q-mr-md" style="border-style: ridge" v-if="pref.getUserPrefAsObj.length > 0">
             <q-option-group class="q-mt-md" v-model="group" @update:model-value="onGroupChange"
               :options="pref.getUserPrefAsObj" color="primary" inline />
           </div>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="row q-pa-md" style="border-style: ridge">
-          <q-select dense filled v-model="model" use-input input-debounce="0" label="LIBDAT" clearable
+          <q-select dense filled v-model="libDatModel" use-input input-debounce="0" label="LIBDAT" clearable
             :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
             <template v-slot:no-option>
               <q-item>
@@ -81,8 +81,6 @@
       v-else-if="queryToggle && !queryStr.launchQueryPrefered" :rows="queries" row-key="index" dense auto-width
       :grid="grid" :loading="loading" boarderd :title="fileNameModel" separator="cell" style="height: 640px"
       :filter="filter" :rowsPerPage="10000" :rows-per-page-options="[0, 8, 18]" ref="tabCol">
-
-
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
@@ -91,16 +89,14 @@
           </template>
         </q-input>
 
-
-
         <q-btn flat class="q-ml-xl" color="yellow" icon-right="archive" label="Export to csv" no-caps
           @click="exportTableField" />
-
-
-
       </template>
     </q-table>
     <!-- Table 3 -->
+
+
+
     <q-table v-else-if="queryStr.queries.length" :loading="queryStr.loadingTable"
       class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" title="Risultati query" dense
       boarderd auto-width separator="cell" :rows="queryStr.queries" row-key="name" :rowsPerPage="30"
@@ -123,6 +119,9 @@
     </q-table>
 
     <!--  <h1>{{as.getQueries}}</h1> -->
+    <div v-if="(libDatModelComputed && false)">
+    </div>
+
   </div>
 </template>
 
@@ -156,7 +155,7 @@ export default {
       },
       group: ref(""),
       loadingInputFiles: false,
-      model: null,
+      libDatModel: null,
       stringOptions: [],
       options: this.stringOptions,
       fileNameModel: null,
@@ -244,8 +243,19 @@ export default {
           sortable: true,
         },
       ],
+      selectedFileName: {},
     };
   },
+  computed: {
+    libDatModelComputed() {
+      // console.log(this.queryStr.getSelectedFileName)
+      if (this.queryStr.getSelectedFileName != null) {
+        return this.onClickFilenameForced()
+
+      } else return "original";
+    },
+  },
+
   methods: {
     voiceChanged() {
       // console.log("Io sono ", this.voice.transcript);
@@ -275,22 +285,23 @@ export default {
       }
     },
 
-
     exportTableField() {
-      var columsObj = []
-      console.log(this.$refs.tabCol.filteredSortedRows.length)
+      var columsObj = [];
+      console.log(this.$refs.tabCol.filteredSortedRows.length);
       if (this.$refs.tabCol.filteredSortedRows.length > 0)
-        columsObj = Object.getOwnPropertyNames(this.$refs.tabCol.filteredSortedRows[0])
+        columsObj = Object.getOwnPropertyNames(
+          this.$refs.tabCol.filteredSortedRows[0]
+        );
 
-      var columsTable = []
+      var columsTable = [];
 
-      columsObj.forEach(x => {
+      columsObj.forEach((x) => {
         columsTable.push({
           field: x,
           name: x,
-          label: x
-        })
-      })
+          label: x,
+        });
+      });
 
       const content = [columsTable.map((col) => this.wrapCsvValue(col.label))]
         .concat(
@@ -313,23 +324,23 @@ export default {
       }
     },
 
-
     exportTableQuery() {
-      var columsObj = []
-      console.log(this.$refs.queryTab.filteredSortedRows.length)
+      var columsObj = [];
+      console.log(this.$refs.queryTab.filteredSortedRows.length);
       if (this.$refs.queryTab.filteredSortedRows.length > 0)
-        columsObj = Object.getOwnPropertyNames(this.$refs.queryTab.filteredSortedRows[0])
+        columsObj = Object.getOwnPropertyNames(
+          this.$refs.queryTab.filteredSortedRows[0]
+        );
 
-      var columsTable = []
+      var columsTable = [];
 
-      columsObj.forEach(x => {
+      columsObj.forEach((x) => {
         columsTable.push({
           field: x,
           name: x,
-          label: x
-        })
-      })
-
+          label: x,
+        });
+      });
 
       const content = [columsTable.map((col) => this.wrapCsvValue(col.label))]
         .concat(
@@ -352,7 +363,6 @@ export default {
       }
     },
 
-
     wrapCsvValue(val, formatFn) {
       let formatted = formatFn !== void 0 ? formatFn(val) : val;
       formatted =
@@ -370,7 +380,7 @@ export default {
     async loadFilenames() {
       try {
         const data = {
-          filename: this.model,
+          filename: this.libDatModel,
         };
         this.loadingInputFiles = true;
         await this.as.getFilenamesAction(data);
@@ -397,7 +407,7 @@ export default {
         await this.pref.setUserPref(this.q.localStorage.getItem("currentUser"));
         if ((await this.pref.getUserPrefAsObj.length) > 0) {
           this.group = this.pref.getUserPrefAsObj[0].value;
-          this.model = this.group;
+          this.libDatModel = this.group;
         }
         await this.as.getUsersAction(data);
         await this.as.getUsers.forEach((element) => {
@@ -413,14 +423,18 @@ export default {
      * Loads the table with the filename information
      */
     async loadFiles() {
-      if (this.fileNameModel) {
+
+if(this.fileNameModel == null)
+return
+
         this.loadingTable = true;
         this.rows = [];
         try {
-          const data = {
-            lib: this.model,
-            fileName: this.fileNameModel.split("-->")[0].trim(),
-          };
+          var data = {
+              lib: this.libDatModel,
+              fileName: this.fileNameModel.split("-->")[0].trim(),
+            };
+
           await this.as.getFilesAction(data);
           this.rows = this.as.getFiles;
           //   this.loadQueries();
@@ -429,7 +443,32 @@ export default {
           console.log(error);
           this.loadingTable = false;
         }
-      }
+    },
+    async loadFilesForced() {
+
+        this.loadingTable = true;
+        this.rows = [];
+        try {
+          const data = {
+              lib: this.queryStr.getSelectedFileName.libname,
+              fileName: this.queryStr.getSelectedFileName.filename,
+            };
+
+          this.libDatModel =this.queryStr.getSelectedFileName.libname
+          this.fileNameModel = this.queryStr.getSelectedFileName.filenameOriginal
+          this.loadFilenames()
+
+      //      console.log(data)
+
+          await this.as.getFilesAction(data);
+          this.rows = this.as.getFiles;
+          //   this.loadQueries();
+          this.loadingTable = false;
+        } catch (error) {
+          console.log(error);
+          this.loadingTable = false;
+        }
+      
     },
     /**
      * Query first 50000 records
@@ -441,7 +480,7 @@ export default {
         this.queries = [];
         try {
           const data = {
-            lib: this.model,
+            lib: this.libDatModel,
             fileName: this.fileNameModel.split("-->")[0].trim(),
           };
           await this.as.getQueriesAction(data);
@@ -486,9 +525,19 @@ export default {
       this.fileNameModel = null;
     },
     onClickFilename(rr) {
+      // Update LocalStorage
       this.loadFiles();
+      this.updateLocalStorageForFastResearch();
       this.filter = "";
       this.queryStr.launchQueryPrefered = false;
+    },
+    onClickFilenameForced(rr) {
+      // Update LocalStorage
+      this.loadFilesForced();
+     // this.updateLocalStorageForFastResearch();
+      this.filter = "";
+      this.queryStr.launchQueryPrefered = false;
+      return "local"
     },
     filterFileNames(val, update) {
       if (val === "") {
@@ -525,9 +574,38 @@ export default {
       this.loadFastFiles();
     },
     onGroupChange() {
-      this.model = this.group;
+      this.libDatModel = this.group;
       this.loadFilenames();
       this.fileNameModel = null;
+    },
+    updateLocalStorageForFastResearch() {
+      // If it doesnt exists, Ill insert it
+      if (this.libDatModel != null && this.fileNameModel != null) {
+        var fileName = this.libDatModel.trim() + "." + this.fileNameModel.trim();
+        var arrFileName = [];
+
+        if (this.q.localStorage.getItem("fileNameList") == null) {
+          arrFileName.push(fileName);
+          this.q.localStorage.set("fileNameList", arrFileName);
+        } else {
+          arrFileName = this.q.localStorage.getItem("fileNameList");
+          // Se non esiste
+          if (!arrFileName.includes(fileName)) {
+            // If it contains 7 element pop the first one
+            if (arrFileName.length > 9) {
+              arrFileName.shift();
+              arrFileName.push(fileName);
+              this.q.localStorage.set("fileNameList", arrFileName);
+            } else {
+              arrFileName.push(fileName);
+              this.q.localStorage.set("fileNameList", arrFileName);
+            }
+          }
+        }
+        this.queryStr.setFileNameListLocalStorage();
+      }
+
+
     },
   },
   // Watcher
@@ -552,6 +630,15 @@ export default {
       if (newQuestion) {
       }
     },
+
+    selectedFileName(newQuestion, oldQuestion) {
+      console.log(newQuestion);
+      if (newQuestion !== null) {
+        this.libDatModel = newQuestion.libname;
+        this.fileNameModel = newQuestion.all;
+      }
+    },
+
     searchFile(newQuestion, oldQuestion) {
       if (!newQuestion) {
         this.columns = [
@@ -668,13 +755,15 @@ export default {
     this.queryStr = queryStore();
     this.loadLibdat();
     this.voice = voiceStore();
+    this.selectedFileName = this.queryStr.getSelectedFileName;
+    //  console.log(this.queryStr.getSelectedFileName)
     //this.as.getQueriesAction({lib:"wrkjexp",fileName: "role_user"})
   },
   components: { Voice },
 };
 </script>
 
-<style lang="sass" >
+<style lang="sass">
 .scritta .q-toggle div.q-toggle__label.q-anchor--skip
   color: #673BB6
 

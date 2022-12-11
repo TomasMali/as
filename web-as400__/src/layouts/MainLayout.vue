@@ -47,10 +47,45 @@
         <q-separator class="q-my-md" />
         <EssentialLink class="q-mt-md text-overline" v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
+
       <q-separator style="margin-top: 36px" />
 
 
-      <q-item-label header class="q-mt-lg">
+      <!-- Research List -->
+      <q-item-label header >
+        Ricerche più recenti 
+        <q-avatar class="q-ml-md " size="26px" color="orange">
+          <span class="material-icons"> star_rate </span>
+        </q-avatar>
+      </q-item-label>
+
+      <div style="max-height: 250px; overflow: auto">
+      <q-list bordered separator class="text-accent text-subtitle2" >
+        <q-item @click="execFromMenu(item)" dense v-for="(item,index)  in queryStr.getLocalStorageFilesList" clickable
+          :key="item.filename">
+ 
+          <q-item dense>
+            <q-item-section>
+              <q-avatar size="25px">
+                {{(index+1)}}
+              </q-avatar>
+            </q-item-section>
+          </q-item>
+
+          <q-item-section >
+            <div class="text-overline" style="font-size: 10px">
+              {{ item.libname + "." + item.filename  }}
+              <!-- {{ item.all  }} -->
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
+
+
+
+      <!-- Query list -->
+      <q-item-label header class="">
         Query preferite
         <q-avatar class="q-ml-md " size="26px" color="orange">
           <span class="material-icons"> star_rate </span>
@@ -58,8 +93,8 @@
       </q-item-label>
 
 
-      <q-list bordered separator class="text-primary text-subtitle2" style="max-height: 800px; overflow: auto">
-
+      <div style="max-height: 250px; overflow: auto">
+      <q-list bordered separator class="text-primary text-subtitle2" >
         <q-item @click="exec(item.SQLSTR)" dense v-for="item in queryStr.getQueriesPrefered" clickable
           :key="item.SQLSTR">
           <q-item dense>
@@ -77,6 +112,10 @@
           </q-item-section>
         </q-item>
       </q-list>
+    </div>
+
+
+
     </q-drawer>
 
     <q-page-container>
@@ -156,6 +195,10 @@ export default defineComponent({
       await queryStr.excecQuery(q.localStorage.getItem("currentUser"), sql);
       queryStr.loadingTable = false;
       queryStr.launchQueryPrefered = true;
+    };
+
+    const execFromMenu = (item) => {
+      queryStr.setFilenameSelected(item)
     };
 
     const filterFn = (val, update) => {
@@ -292,7 +335,7 @@ export default defineComponent({
       const ip = str.substring(0, str.indexOf(' ')); // "72"
       const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
 
-      console.log("User ", userDb)
+     // console.log("User ", userDb)
 
       q.localStorage.set("as", ip);
       q.localStorage.set("userDb", userDb);
@@ -310,6 +353,9 @@ export default defineComponent({
 
     const loadUserQueries = async () => {
       await queryStr.selectUserQuery(q.localStorage.getItem("currentUser"));
+
+      queryStr.setFileNameListLocalStorage()
+
     };
 
     const loadUserIps = async () => {
@@ -341,6 +387,7 @@ export default defineComponent({
       filterFn,
 
       exec,
+      execFromMenu,
       model,
       options,
       stringOptions,

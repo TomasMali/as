@@ -79,6 +79,8 @@ export const queryStore = defineStore("query", {
       columsLoading: false,
       selected: ref([]),
       whereCompose: ref(""),
+      fileNamesObjList: [],
+      selectedFileName: ref(null)
     };
   },
   getters: {
@@ -97,6 +99,8 @@ export const queryStore = defineStore("query", {
     getFilenames: (state) => state.optionFile,
     getColumns: (state) => state.rows,
     getSelected: (state) => state.selected,
+    getLocalStorageFilesList: (state) => state.fileNamesObjList,
+    getSelectedFileName: (state) => state.selectedFileName
   },
   actions: {
     setPreview() {
@@ -219,14 +223,14 @@ export const queryStore = defineStore("query", {
         ":3300/files/PRTFFLD1/?library=" +
         data.lib +
         "&tablename=" +
-        data.fileName  +
+        data.fileName +
         "&as=" +
         LocalStorage.getItem("as")
-        + "&userLib="+LocalStorage.getItem("currentUser")+
+        + "&userLib=" + LocalStorage.getItem("currentUser") +
         "&userDb=" +
         LocalStorage.getItem("userDb")
 
-        console.log(url)
+     // console.log(url)
 
       const response = await fetch(url, {
         method: "GET",
@@ -269,10 +273,10 @@ export const queryStore = defineStore("query", {
         "http://" +
         window.location.hostname +
         ":3300/files/FILENAMES/?library=" +
-        data.filename  +
+        data.filename +
         "&as=" +
         LocalStorage.getItem("as")
-        + "&userLib="+LocalStorage.getItem("currentUser")+
+        + "&userLib=" + LocalStorage.getItem("currentUser") +
         "&userDb=" +
         LocalStorage.getItem("userDb")
 
@@ -307,10 +311,10 @@ export const queryStore = defineStore("query", {
         "http://" +
         window.location.hostname +
         ":3300/files/SCHEMA/?library=" +
-        data.user  +
+        data.user +
         "&as=" +
         LocalStorage.getItem("as")
-        + "&userLib="+LocalStorage.getItem("currentUser")+
+        + "&userLib=" + LocalStorage.getItem("currentUser") +
         "&userDb=" +
         LocalStorage.getItem("userDb")
 
@@ -338,17 +342,17 @@ export const queryStore = defineStore("query", {
       this.optionLibdat = responseData;
     },
 
-    async excecQuery(libdat,query) {
+    async excecQuery(libdat, query) {
       // "http://localhost:3300/files/?library=wrkjexp&tablename=role_user"
       let url =
-        "http://" + window.location.hostname + ":3300/files/?str=" + query  +
+        "http://" + window.location.hostname + ":3300/files/?str=" + query +
         "&as=" +
         LocalStorage.getItem("as")
         + "&library=" + libdat +
         "&userDb=" +
         LocalStorage.getItem("userDb")
 
-        console.log(url)
+     // console.log(url)
 
       const response = await fetch(url, {
         method: "GET",
@@ -390,7 +394,7 @@ export const queryStore = defineStore("query", {
         "&sqlstr=" +
         queryObj.sqlstr +
         "&note=" +
-        queryObj.note +       "&as=" +
+        queryObj.note + "&as=" +
         LocalStorage.getItem("as")
 
       const response = await fetch(url, {
@@ -425,8 +429,8 @@ export const queryStore = defineStore("query", {
         "http://" +
         window.location.hostname +
         ":3300/files/selectUserQuery/?libdat=" +
-        user +   
-            "&as=" +
+        user +
+        "&as=" +
         LocalStorage.getItem("as")
 
       const response = await fetch(url, {
@@ -471,7 +475,7 @@ export const queryStore = defineStore("query", {
         ":3300/files/deleteUserQuery/?libdat=" +
         user +
         "&title=" +
-        title + 
+        title +
         "&as=" +
         LocalStorage.getItem("as")
 
@@ -511,7 +515,7 @@ export const queryStore = defineStore("query", {
         "&title=" +
         title +
         "&pref=" +
-        pref + 
+        pref +
         "&as=" +
         LocalStorage.getItem("as")
 
@@ -541,5 +545,49 @@ export const queryStore = defineStore("query", {
         await this.selectUserQuery(user);
       }
     },
+
+
+    setFileNameListLocalStorage() {
+      var arrFileName = (LocalStorage.getItem("fileNameList") == null ? [] : LocalStorage.getItem("fileNameList"))
+      var fileNamesObjListLocal = []
+      arrFileName.forEach(x => {
+
+        var filenameOriginal = x.substring(x.indexOf('.') + 1)
+        
+
+        var libname = (x.split("-->")[0].trim()).split(".")[0].trim()
+        var filename = (x.split("-->")[0].trim()).split(".")[1].trim()
+
+        var desc = x.split("-->")[1].trim()
+        if (desc.length > 25)
+          desc = desc.substring(desc.indexOf('-') + 1).trim()
+
+
+        if ((desc.length + libname.length + filename.length + 1) > 40)
+          desc = desc.slice(0, 23)
+
+        if (libname.length + filename.length + 1 > 16)
+          desc = desc.slice(0, 22)
+
+        fileNamesObjListLocal.push({
+          libname: libname,
+          filenameOriginal: filenameOriginal,
+          filename: filename,
+          description: desc,
+          all: x
+        })
+      })
+      this.fileNamesObjList = fileNamesObjListLocal.reverse()
+    },
+    setFilenameSelected(item){
+      this.selectedFileName = item
+      // console.log(this.selectedFileName)
+    },
+    emptyFilenameSelected(){
+      this.selectedFileName = ref(null)
+      // console.log(this.selectedFileName)
+    }
+
+
   },
 });
