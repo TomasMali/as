@@ -244,15 +244,19 @@ export default {
         },
       ],
       selectedFileName: {},
+      blockLocalStorage: false
     };
   },
   computed: {
     libDatModelComputed() {
-      // console.log(this.queryStr.getSelectedFileName)
-      if (this.queryStr.getSelectedFileName != null) {
+       ///console.log(this.queryStr.getSelectedFileName)
+      if (this.queryStr.getSelectedFileName != null && !this.blockLocalStorage ) {
         return this.onClickFilenameForced()
 
-      } else return "original";
+      } else {
+        this.blockLocalStorage =false
+        return "original";
+      }
     },
   },
 
@@ -287,7 +291,6 @@ export default {
 
     exportTableField() {
       var columsObj = [];
-      console.log(this.$refs.tabCol.filteredSortedRows.length);
       if (this.$refs.tabCol.filteredSortedRows.length > 0)
         columsObj = Object.getOwnPropertyNames(
           this.$refs.tabCol.filteredSortedRows[0]
@@ -326,7 +329,6 @@ export default {
 
     exportTableQuery() {
       var columsObj = [];
-      console.log(this.$refs.queryTab.filteredSortedRows.length);
       if (this.$refs.queryTab.filteredSortedRows.length > 0)
         columsObj = Object.getOwnPropertyNames(
           this.$refs.queryTab.filteredSortedRows[0]
@@ -424,51 +426,51 @@ export default {
      */
     async loadFiles() {
 
-if(this.fileNameModel == null)
-return
+      if (this.fileNameModel == null)
+        return
 
-        this.loadingTable = true;
-        this.rows = [];
-        try {
-          var data = {
-              lib: this.libDatModel,
-              fileName: this.fileNameModel.split("-->")[0].trim(),
-            };
+      this.loadingTable = true;
+      this.rows = [];
+      try {
+        var data = {
+          lib: this.libDatModel,
+          fileName: this.fileNameModel.split("-->")[0].trim(),
+        };
 
-          await this.as.getFilesAction(data);
-          this.rows = this.as.getFiles;
-          //   this.loadQueries();
-          this.loadingTable = false;
-        } catch (error) {
-          console.log(error);
-          this.loadingTable = false;
-        }
+        await this.as.getFilesAction(data);
+        this.rows = this.as.getFiles;
+        //   this.loadQueries();
+        this.loadingTable = false;
+      } catch (error) {
+        console.log(error);
+        this.loadingTable = false;
+      }
     },
     async loadFilesForced() {
 
-        this.loadingTable = true;
-        this.rows = [];
-        try {
-          const data = {
-              lib: this.queryStr.getSelectedFileName.libname,
-              fileName: this.queryStr.getSelectedFileName.filename,
-            };
+      this.loadingTable = true;
+      this.rows = [];
+      try {
+        const data = {
+          lib: this.queryStr.getSelectedFileName.libname,
+          fileName: this.queryStr.getSelectedFileName.filename,
+        };
 
-          this.libDatModel =this.queryStr.getSelectedFileName.libname
-          this.fileNameModel = this.queryStr.getSelectedFileName.filenameOriginal
-          this.loadFilenames()
+        this.libDatModel = this.queryStr.getSelectedFileName.libname
+        this.fileNameModel = this.queryStr.getSelectedFileName.filenameOriginal
+        this.loadFilenames()
 
-      //      console.log(data)
+        //      console.log(data)
 
-          await this.as.getFilesAction(data);
-          this.rows = this.as.getFiles;
-          //   this.loadQueries();
-          this.loadingTable = false;
-        } catch (error) {
-          console.log(error);
-          this.loadingTable = false;
-        }
-      
+        await this.as.getFilesAction(data);
+        this.rows = this.as.getFiles;
+        //   this.loadQueries();
+        this.loadingTable = false;
+      } catch (error) {
+        console.log(error);
+        this.loadingTable = false;
+      }
+
     },
     /**
      * Query first 50000 records
@@ -534,7 +536,7 @@ return
     onClickFilenameForced(rr) {
       // Update LocalStorage
       this.loadFilesForced();
-     // this.updateLocalStorageForFastResearch();
+      // this.updateLocalStorageForFastResearch();
       this.filter = "";
       this.queryStr.launchQueryPrefered = false;
       return "local"
@@ -574,6 +576,10 @@ return
       this.loadFastFiles();
     },
     onGroupChange() {
+      // this.fileNameModel = null;
+      // this.libDatModel = null
+      // this.queryStr.emptyFilenameSelected()
+      this.blockLocalStorage = true
       this.libDatModel = this.group;
       this.loadFilenames();
       this.fileNameModel = null;
@@ -631,13 +637,13 @@ return
       }
     },
 
-    selectedFileName(newQuestion, oldQuestion) {
-      console.log(newQuestion);
-      if (newQuestion !== null) {
-        this.libDatModel = newQuestion.libname;
-        this.fileNameModel = newQuestion.all;
-      }
-    },
+    // selectedFileName(newQuestion, oldQuestion) {
+    //   console.log(newQuestion);
+    //   if (newQuestion !== null) {
+    //     this.libDatModel = newQuestion.libname;
+    //     this.fileNameModel = newQuestion.all;
+    //   }
+    // },
 
     searchFile(newQuestion, oldQuestion) {
       if (!newQuestion) {

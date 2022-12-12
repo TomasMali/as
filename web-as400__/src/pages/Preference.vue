@@ -167,9 +167,6 @@ const q = useQuasar();
 const setPrefs = async () => {
   await pref.setUserPref(q.localStorage.getItem("currentUser"));
 
-  console.log(q.localStorage.getItem("currentUser"));
-  console.log(pref.getUserPrefAsObj);
-
   if (pref.getUserPrefAsObj.length) {
     model1.value = pref.getUserPrefAsObj[0].value;
     model2.value = pref.getUserPrefAsObj[1] != undefined ? pref.getUserPrefAsObj[1].value : "";
@@ -298,7 +295,6 @@ const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition
 const sr = new Recognition()
 
 onMounted(() => {
-  console.log("mounted!");
   loadUsers();
   setPrefs();
 
