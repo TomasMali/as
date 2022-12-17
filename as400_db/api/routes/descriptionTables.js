@@ -5,7 +5,6 @@ const pool = require("./connection");
 
 
 
-
 // {
 //     "ip": "10.200.100.160",
 //     "userDb": "wrktommal",
@@ -93,6 +92,10 @@ http://localhost:3300/files/getIps/?library=WRKTOMMAL
 router.get("/getIps", async (req, res, next) => {
     console.log("GET: " + req.query.library + "\n");
 
+    // const ipAddress = req.socket.remoteAddress;
+console.log( req.socket.remoteAddress)
+
+    
 
     pool_upd = await pool("fake", "fake")
 
@@ -120,8 +123,6 @@ router.get("/getIps", async (req, res, next) => {
  */
 // http://localhost:3300/files/?library=WRKTOMMAL&tablename=role_user
 router.get("/", async (req, res, next) => {
-
-    console.log(req.query.str)
 
     pool_upd = await pool(req.query.userDb, req.query.as)
 

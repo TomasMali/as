@@ -1,15 +1,17 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="q-py-sm">
-      <q-toolbar>
+    <q-header elevated class="">
+      <q-toolbar class="glossy">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
+         <small> {{ phrase.content }} ({{phrase.author}})  </small> 
           <!-- <Voice></Voice> -->
         </q-toolbar-title>
 
-        <q-select  class="q-mr-md select-color" style=" max-width:310px" v-model="modelId" use-input input-debounce="0" label="IP"
-          label-color="yellow" :options="optionsIp" @filter="filterIp" @update:model-value="setIp" behavior="menu">
+        <q-select class="q-mr-md select-color " style=" max-width:310px" v-model="modelId" use-input input-debounce="0"
+          label="IP" label-color="yellow" :options="optionsIp" @filter="filterIp" @update:model-value="setIp"
+          behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -22,7 +24,8 @@
         </q-select>
 
         <q-select style="max-width: 250px;" class="q-mr-xl" v-model="model" use-input input-debounce="0" label="PROFILO"
-          label-color="yellow" :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
+          label-color="yellow" :options="options" @filter="filterFn" @update:model-value="onClickLibdat"
+          behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -39,48 +42,49 @@
           <q-toggle color="red" v-model="dark" @click="toggleDark" />
         </div>
       </q-toolbar>
+
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header > Essential Links </q-item-label>
-        <q-separator class="q-my-md" />
-        <EssentialLink class="q-mt-md text-overline" v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+        <q-item-label header> Essential Links </q-item-label>
+        <q-separator class="q-my-xs" />
+        <EssentialLink class="q-mt-md text-overline " v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
 
       <q-separator style="margin-top: 36px" />
 
 
       <!-- Research List -->
-      <q-item-label header >
-        Ricerche più recenti 
+      <q-item-label header class="">
+        Ricerche più recenti
         <q-avatar class="q-ml-md " size="26px" color="orange">
           <span class="material-icons"> star_rate </span>
         </q-avatar>
       </q-item-label>
 
       <div style="max-height: 250px; overflow: auto">
-      <q-list bordered separator class="text-accent text-subtitle2" >
-        <q-item @click="execFromMenu(item)" dense v-for="(item,index)  in queryStr.getLocalStorageFilesList" clickable
-          :key="item.filename">
- 
-          <q-item dense>
+        <q-list bordered separator class="text-accent text-subtitle2">
+          <q-item @click="execFromMenu(item)" dense v-for="(item, index)  in queryStr.getLocalStorageFilesList" clickable
+            :key="item.filename">
+
+            <q-item dense>
+              <q-item-section>
+                <q-avatar size="25px">
+                  {{ (index + 1) }}
+                </q-avatar>
+              </q-item-section>
+            </q-item>
+
             <q-item-section>
-              <q-avatar size="25px">
-                {{(index+1)}}
-              </q-avatar>
+              <div class="text-overline" style="font-size: 10px">
+                {{ item.libname + "." + item.filename }}
+                <!-- {{ item.all  }} -->
+              </div>
             </q-item-section>
           </q-item>
-
-          <q-item-section >
-            <div class="text-overline" style="font-size: 10px">
-              {{ item.libname + "." + item.filename  }}
-              <!-- {{ item.all  }} -->
-            </div>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </div>
+        </q-list>
+      </div>
 
 
 
@@ -94,25 +98,25 @@
 
 
       <div style="max-height: 250px; overflow: auto">
-      <q-list bordered separator class="text-primary text-subtitle2" >
-        <q-item @click="exec(item.SQLSTR)" dense v-for="item in queryStr.getQueriesPrefered" clickable
-          :key="item.SQLSTR">
-          <q-item dense>
+        <q-list bordered separator class="text-primary text-subtitle2">
+          <q-item @click="exec(item.SQLSTR)" dense v-for="item in queryStr.getQueriesPrefered" clickable
+            :key="item.SQLSTR">
+            <q-item dense>
+              <q-item-section>
+                <q-avatar size="20px">
+                  <span class="material-icons"> play_circle </span>
+                </q-avatar>
+              </q-item-section>
+            </q-item>
+
             <q-item-section>
-              <q-avatar size="20px">
-                <span class="material-icons"> play_circle </span>
-              </q-avatar>
+              <div class="text-overline" style="font-size: 10px">
+                {{ item.TITLE }}
+              </div>
             </q-item-section>
           </q-item>
-
-          <q-item-section>
-            <div class="text-overline" style="font-size: 10px">
-              {{ item.TITLE }}
-            </div>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </div>
+        </q-list>
+      </div>
 
 
 
@@ -325,7 +329,7 @@ export default defineComponent({
         model.value = q.localStorage.getItem("userDb").toUpperCase()
       } else {
         modelId.value[0] = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb").toUpperCase()
-    
+
       }
     };
 
@@ -335,7 +339,7 @@ export default defineComponent({
       const ip = str.substring(0, str.indexOf(' ')); // "72"
       const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
 
-     // console.log("User ", userDb)
+      // console.log("User ", userDb)
 
       q.localStorage.set("as", ip);
       q.localStorage.set("userDb", userDb);
@@ -346,8 +350,8 @@ export default defineComponent({
 
     const loadDarkMode = () => {
       dark.value = q.localStorage.getItem("darkMode");
-      if(dark.value == undefined || dark.value == null)
-      dark.value = false
+      if (dark.value == undefined || dark.value == null)
+        dark.value = false
       q.dark.set(dark.value);
     };
 
@@ -367,12 +371,19 @@ export default defineComponent({
           optionsIp.value.push(element.CLIEIP + " " + element.USERDB);
 
           stringOptionsIp.value.push(element.CLIEIP + " " + element.USERDB);
-    
+
         });
       } catch (error) {
         console.log(error);
       }
     };
+
+    const phrase = ref("")
+    const loadPhrases = async () => {
+      const response = await fetch("http://api.quotable.io/random?maxLength=70");
+      const data = await response.json();
+      phrase.value = data
+    }
 
     return {
       essentialLinks: linksList,
@@ -404,11 +415,15 @@ export default defineComponent({
       q,
       queryStr,
       loadUserIps,
-      stringOptionsIp
+      stringOptionsIp,
+      phrase,
+      loadPhrases
     };
   },
 
   mounted() {
+
+    this.loadPhrases()
 
     this.loadUserIps()
 
@@ -417,13 +432,12 @@ export default defineComponent({
     this.loadUserPrefs();
     this.loadUsers();
     this.loadUserQueries();
-  
+
   },
 });
 </script>
 
 <style  >
-
 
 </style>
 
