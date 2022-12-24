@@ -5,7 +5,7 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-         <small> {{ phrase.content }} ({{phrase.author}})  </small> 
+          <small> {{ phrase.content }} ({{ phrase.author }}) </small>
           <!-- <Voice></Voice> -->
         </q-toolbar-title>
 
@@ -65,8 +65,8 @@
 
       <div style="max-height: 250px; overflow: auto">
         <q-list bordered separator class="text-accent text-subtitle2">
-          <q-item @click="execFromMenu(item)" dense v-for="(item, index)  in queryStr.getLocalStorageFilesList" clickable
-            :key="item.filename">
+          <q-item @click="execFromMenu(item)" dense v-for="(item, index)  in queryStr.getLocalStorageFilesList"
+            clickable :key="item.filename">
 
             <q-item dense>
               <q-item-section>
@@ -277,6 +277,15 @@ export default defineComponent({
           to: "/query",
         });
 
+        
+                linksList.push({
+                  title: "Workitems",
+                  caption: "Gestisci WI",
+                  icon: "manage_accounts",
+                  to: "/workitems",
+                });
+
+                
         linksList.push({
           title: "Preferenze",
           caption: "pref",
@@ -284,14 +293,7 @@ export default defineComponent({
           to: "/preference",
         });
 
-        /*
-                      linksList.push({
-                  title: "Test",
-                  caption: "Only for test",
-                  icon: "manage_accounts",
-                  to: "/test",
-                });
-                */
+
       }
 
       pref.setUserPref(model.value);

@@ -28,6 +28,11 @@ const routes = [{
                     import ("pages/Index.vue"),
             },
             {
+                path: "workitems",
+                component: () =>
+                    import ("pages/Workitems.vue"),
+            },
+            {
                 path: "preference",
                 component: () =>
                     import ("pages/Preference.vue"),
