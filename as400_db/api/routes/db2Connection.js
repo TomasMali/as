@@ -68,9 +68,25 @@ router.get("/wis", async (req, res, next) => {
         if (err) return console.log(err);
 
         user = req.query.user
-        sql = (user === "" ? "" : " SELECT * FROM ") + " (SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM WHERE CATEGORY_ITEM_ID = '" +
-            req.query.category +
-            "' ORDER  BY CREATION_DATE DESC )" + (user === "" ? " FETCH FIRST 100 ROWS ONLY" : (" WHERE OWNER_ITEM_ID='" + req.query.user.trim() + "'"))
+
+        var category = ""
+        where = " WHERE CATEGORY_ITEM_ID IN("
+        if (req.query.category != "") {
+
+            req.query.category.split(",").forEach(element => {
+                category += "'" + element + "',"
+            });
+            if (category != "") {
+                category = where + category
+                category = category.slice(0, -1)
+                category += ") "
+            }
+        }
+        console.log(category)
+
+        sql = (user === "" ? "" : " SELECT * FROM ") + " (SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM " +
+            category
+            + " ORDER  BY ID DESC )" + (user === "" ? " FETCH FIRST 100 ROWS ONLY" : (" WHERE OWNER_ITEM_ID='" + req.query.user.trim() + "' FETCH FIRST 100 ROWS ONLY "))
 
         conn.query(
             sql,
@@ -97,7 +113,7 @@ router.get("/wi", async (req, res, next) => {
     ibmdb.open(connStr, function (err, conn) {
         if (err) return console.log(err);
 
-        sql =  "SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM WHERE ID =" +
+        sql = "SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM WHERE ID =" +
             req.query.id + " FETCH FIRST ROW ONLY"
 
         conn.query(
