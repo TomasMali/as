@@ -11,7 +11,7 @@ export const workitemStore = defineStore("workitem", {
             categories: [],
             usernames: [],  
             category: ref([]),
-            username: ref(null),
+            username: ref([]),
             categoryOptions : ref([]),
             optionsC : ref([]),
             usernameOptions : ref([]),
@@ -22,6 +22,7 @@ export const workitemStore = defineStore("workitem", {
             loadingInputFiles: false,
             loadingCat: false,
             filter: "",
+            resolved: false,
             columns: [
                 {
                   name: "ID",
@@ -103,7 +104,7 @@ export const workitemStore = defineStore("workitem", {
     getters: {
         getCategories: (state) => state.categories.map(a => { return { label: a.NAME_COL.trim(),
                                                                val: a.ITEM_ID } } ),
-        getUsernames: (state) => state.usernames.map(u => u.USER_COL),
+        getUsernames: (state) => state.usernames.map(u => { return { label: u.USER_COL.trim() } }),
         getWis: (state) => state.wis,
 
 
@@ -140,6 +141,7 @@ export const workitemStore = defineStore("workitem", {
         },
         async loadUsernames() {
             let url = "http://" + window.location.hostname + ":3300/db2/usernames"
+          
 
             const response = await fetch(url, {
                 method: "GET",
@@ -166,9 +168,9 @@ export const workitemStore = defineStore("workitem", {
         },
 
         async loadWis(data) {
-            let url = "http://" + window.location.hostname + ":3300/db2/wis/" + "?category="+data.category + "&user="+data.user
+            let url = "http://" + window.location.hostname + ":3300/db2/wis/" + "?category="+data.category + "&user="+data.user + "&resolved=" + data.resolved
 
-         //   console.log(url)
+              // console.log(url)
             const response = await fetch(url, {
                 method: "GET",
                 cache: "no-cache",
@@ -192,6 +194,32 @@ export const workitemStore = defineStore("workitem", {
 
             this.wis = responseData;
         },
+        async loadSingleWi(ids) {
+          let url = "http://" + window.location.hostname + ":3300/db2/wi/" + "?id="+ids
+            console.log(url)
+          const response = await fetch(url, {
+              method: "GET",
+              cache: "no-cache",
+              credentials: "same-origin",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              redirect: "follow",
+              referrerPolicy: "no-referrer",
+              enctype: "mutipart/form-data",
+          });
+
+          const responseData = await response.json();
+
+          if (!response.ok) {
+              if (responseData.code === 409) {
+                  throw new Error(responseData.message);
+              } else
+                  throw new Error("Request failed with error code: " + response.status);
+          }
+
+          this.wis = responseData;
+      },
 
 
     },

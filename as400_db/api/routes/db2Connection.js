@@ -69,6 +69,8 @@ router.get("/wis", async (req, res, next) => {
 
         user = req.query.user
 
+        resolted = req.query.resolved
+
         var category = ""
         where = " WHERE CATEGORY_ITEM_ID IN("
         if (req.query.category != "") {
@@ -82,11 +84,43 @@ router.get("/wis", async (req, res, next) => {
                 category += ") "
             }
         }
+
+
+        var users = ""
+        if (user != "") {
+
+            user.split(",").forEach(element => {
+                users += "'" + element + "',"
+            });
+            if (users != "") {
+                users = users.slice(0, -1)
+
+                users = " WHERE OWNER_ITEM_ID IN(" + users + ") "
+            }
+        }
+        var noFilter = ""
+        if (req.query.category == "" && user == "")
+            noFilter = " FETCH FIRST 19 ROWS ONLY "
+
+       var  resoltedCondition = ""
+
+       console.log(resolted)
+
+        if(resolted != ""){
+            if(category != "")
+            resoltedCondition = " AND TRIM(RESOLUTION_DATE) IS  NULL "
+            else
+            resoltedCondition = " WHERE TRIM(RESOLUTION_DATE) IS  NULL "
+        }
+
+
         console.log(category)
 
         sql = (user === "" ? "" : " SELECT * FROM ") + " (SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM " +
-            category
-            + " ORDER  BY ID DESC )" + (user === "" ? " FETCH FIRST 100 ROWS ONLY" : (" WHERE OWNER_ITEM_ID='" + req.query.user.trim() + "' FETCH FIRST 100 ROWS ONLY "))
+            category + resoltedCondition
+            + " ORDER  BY ID DESC ) " + users + noFilter 
+
+            console.log("\n" + sql + "\n");
 
         conn.query(
             sql,
@@ -99,7 +133,7 @@ router.get("/wis", async (req, res, next) => {
                 conn.close(function () {
 
                     res.status(200).json(data);
-                    console.log("\n" + sql + "\n");
+                   
                 });
             }
         );
@@ -113,8 +147,11 @@ router.get("/wi", async (req, res, next) => {
     ibmdb.open(connStr, function (err, conn) {
         if (err) return console.log(err);
 
-        sql = "SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM WHERE ID =" +
-            req.query.id + " FETCH FIRST ROW ONLY"
+        // sql = "SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM WHERE ID =" +
+        //     req.query.id + " FETCH FIRST ROW ONLY"
+
+
+        sql = "SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM  WHERE ID IN(" + req.query.id.toString() + ")  ORDER  BY ID DESC "
 
         conn.query(
             sql,

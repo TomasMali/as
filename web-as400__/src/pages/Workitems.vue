@@ -9,10 +9,10 @@
 
         <div class="row q-pa-md">
 
-        <q-select class="q-mr-lg" dense v-model="wiStore.category.value" transition-show="flip-up" transition-hide="flip-down"
+          <q-select dense class="q-mr-lg" :options="wiStore.optionsC.value" v-model="wiStore.category.value"
             @filter="filterCategory" @update:model-value="onClickCategory" :loading="wiStore.loadingCat"
-            :disable="wiStore.loadingCat" :options="wiStore.optionsC.value"  use-input
-            input-debounce="0" label="(AREA) Filed Against" clearable multiple emit-value map-options >
+            transition-show="flip-up" transition-hide="flip-down" :disable="wiStore.loadingCat" use-input
+            input-debounce="0" label="(AREA) Filed Against" clearable multiple emit-value map-options>
             <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
               <q-item v-bind="itemProps">
                 <q-item-section>
@@ -30,17 +30,46 @@
             </template>
           </q-select>
 
-          <q-select transition-show="flip-up" transition-hide="flip-down" class="q-ml-md" style="max-height: 500px"
-            dense v-model="wiStore.username" use-input :loading="wiStore.loadingInputFiles"
-            :disable="wiStore.loadingInputFiles" input-debounce="0" label="Owned By" autofocus clearable
-            :options="wiStore.optionsU.value" @filter="filterUsername" @update:model-value="onClickUsername"
-            behavior="menu">
+          <q-select class="q-ml-md" :options="wiStore.optionsU.value" v-model="wiStore.username.value"
+            @filter="filterUsername" @update:model-value="onClickUsername" dense use-input
+            :loading="wiStore.loadingInputFiles" transition-show="flip-up" transition-hide="flip-down"
+            :disable="wiStore.loadingInputFiles" input-debounce="0" label="Owned By" autofocus clearable multiple emit-value map-options
+           >
+           <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+              <q-item v-bind="itemProps">
+                <q-item-section>
+                  <q-item-label v-html="opt.label" />
+                </q-item-section>
+                <q-item-section side>
+                  <q-toggle :model-value="selected" @update:model-value="toggleOption(opt)" />
+                </q-item-section>
+              </q-item>
+            </template>
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
               </q-item>
             </template>
           </q-select>
+
+          <div class="q-mx-lg scritta">
+            <q-toggle dense  v-model="wiStore.resolved" @update:model-value="toggleResolved" size="xl" icon="visibility" label="Resolved" color="purple" />
+          </div>
+
+
+          <q-input class="q-mr-sm" dense square color="primary" label-color="primary" outlined clearable
+              v-model="wiStore.wiSearch" label="Search one or a list of WI">
+              <template v-slot:append>
+                <q-icon name="bolt" color="primary" />
+              </template>
+            </q-input>
+
+            <q-btn dense  inline color="primary q-ml-sm" label="Search" icon-right="send"
+              @click="searchWi" :disable="
+                wiStore.wiSearch == null ||
+                wiStore.wiSearch == ''  ||
+                !isNumeric()
+              " />
 
 
 
@@ -93,9 +122,11 @@
 
 import { onMounted, ref } from "vue";
 import { workitemStore } from "../stores/workItem";
-import { exportFile } from "quasar";
+import { exportFile,useQuasar } from "quasar";
 const wiStore = workitemStore();
 const tabCol = ref(null);
+
+const q = useQuasar()
 
 
 const wrapCsvValue = (val, formatFn) => {
@@ -160,20 +191,30 @@ const onClickCategory = () => {
 };
 const loadWis = async () => {
   try {
-     var categoiesList = []
-     if(wiStore.category.value != undefined)
-     wiStore.category.value.forEach(c => {
-      categoiesList.push(c.val)
-     })
+    var categoiesList = []
+    if (wiStore.category.value != undefined)
+      wiStore.category.value.forEach(c => {
+        categoiesList.push(c.val)
+      })
 
-     //console.log(wiStore.category)
+      var usersList = []
+      if (wiStore.username.value != undefined)
+      wiStore.username.value.forEach(c => {
+        usersList.push(c.label)
+      })
+
 
     const data = {
-      category:  categoiesList,
-      user: wiStore.username == null ? "" : wiStore.username
+      category: categoiesList,
+      user: usersList,
+      resolved: wiStore.resolved ? "1" : ""
     };
+
+    
     wiStore.loading = true
     await wiStore.loadWis(data);
+ //   q.localStorage.set("wiQuery", data)
+  
     wiStore.loading = false
   } catch (error) {
     console.log(error);
@@ -221,7 +262,7 @@ const filterUsername = (val, update) => {
   update(() => {
     const needle = val.toLowerCase();
     wiStore.optionsU.value = wiStore.usernameOptions.value.filter(
-      (v) => v.toLowerCase().indexOf(needle) > -1
+      (v) => v.label.toLowerCase().indexOf(needle) > -1
     );
   });
 };
@@ -233,16 +274,62 @@ const loadUsernames = async () => {
 };
 
 
+const toggleResolved = () =>{
+  loadWis();
+}
+
+
+
+const searchWi = () => {
+  loadSingleWi()
+}
+const loadSingleWi = async () => {
+  try {
+    wiStore.loading = true
+    console.log(wiStore.wiSearch)
+    
+    await wiStore.loadSingleWi(wiStore.wiSearch);
+ //   q.localStorage.set("wiQuery", data)
+  
+    wiStore.loading = false
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+function isNumeric() {
+  if(wiStore.wiSearch.endsWith(","))
+  return false
+ var str = wiStore.wiSearch.replace(",","").trim()
+  if (typeof str != "string") return false // we only process strings!  
+  return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+
 onMounted(() => {
   loadCategories();
   loadUsernames();
+
+//   const data = q.localStorage.getItem("wiQuery")
+//   if( data != null && data.user != null){
+//   console.log(data)
+//   wiStore.username.value = data.user
+//   wiStore.category.value = data.category
+//   wiStore.resolved = data.resolved == "" ? false : true
+// }
   loadWis()
+ // loadSingleWi()
+
 });
 
 </script>
 
 
 <style lang="sass">
+.scritta .q-toggle div.q-toggle__label.q-anchor--skip
+  color: #673BB6
+
 .q-textarea.q-field--dense.q-field--labeled
   font-size: 15px
 

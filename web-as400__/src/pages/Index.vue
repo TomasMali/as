@@ -56,8 +56,7 @@
       </q-card-section>
     </q-card>
     <!-- Table 1 -->
-    <q-table
-    :loading="loadingTable" v-if="!queryToggle && !queryStr.launchQueryPrefered" dense auto-width
+    <q-table :loading="loadingTable" v-if="!queryToggle && !queryStr.launchQueryPrefered" dense auto-width
       class="text-subtitle2 my-sticky-header-table " table-header-class="text-white" :grid="grid" :rows="rows"
       :columns="columns" row-key="name" boarderd :title="fileNameModel" separator="cell" :rowsPerPage="30"
       :rows-per-page-options="[0, 8, 18]" style="height: 640px" :filter="filter" ref="tb">
@@ -250,12 +249,12 @@ export default {
   },
   computed: {
     libDatModelComputed() {
-       ///console.log(this.queryStr.getSelectedFileName)
-      if (this.queryStr.getSelectedFileName != null && !this.blockLocalStorage ) {
+      ///console.log(this.queryStr.getSelectedFileName)
+      if (this.queryStr.getSelectedFileName != null && !this.blockLocalStorage) {
         return this.onClickFilenameForced()
 
       } else {
-        this.blockLocalStorage =false
+        this.blockLocalStorage = false
         return "original";
       }
     },
