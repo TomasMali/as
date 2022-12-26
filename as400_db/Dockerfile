@@ -1,5 +1,5 @@
 
-FROM node
+FROM node:16.17
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY package.json .
 
 RUN apt-get update -y
 
-RUN apt install default-jdk -y
+RUN apt install default-jdk -y 
 
 RUN apt install node-gyp -y
 
