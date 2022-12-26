@@ -23,6 +23,7 @@ export const workitemStore = defineStore("workitem", {
             loadingCat: false,
             filter: "",
             resolved: false,
+            wiSearch: ref(null),
             columns: [
                 {
                   name: "ID",
