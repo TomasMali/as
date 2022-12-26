@@ -22,7 +22,7 @@ export const workitemStore = defineStore("workitem", {
             loadingInputFiles: false,
             loadingCat: false,
             filter: "",
-            resolved: false,
+            resolved: true,
             wiSearch: ref(null),
             columns: [
                 {

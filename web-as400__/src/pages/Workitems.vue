@@ -53,7 +53,7 @@
           </q-select>
 
           <div class="q-mx-lg scritta">
-            <q-toggle dense  v-model="wiStore.resolved" @update:model-value="toggleResolved" size="xl" icon="visibility" label="Resolved" color="purple" />
+            <q-toggle dense  v-model="wiStore.resolved" @update:model-value="toggleResolved" size="xl" icon="visibility" label="Opened" color="purple" />
           </div>
 
 
