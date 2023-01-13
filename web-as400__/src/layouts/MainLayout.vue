@@ -329,6 +329,8 @@ export default defineComponent({
         q.localStorage.set("as", ip);
         q.localStorage.set("userDb", userDb.toUpperCase());
         model.value = q.localStorage.getItem("userDb").toUpperCase()
+              // Load all the user preferences
+        onClickLibdat()
       } else {
         modelId.value[0] = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb").toUpperCase()
 
