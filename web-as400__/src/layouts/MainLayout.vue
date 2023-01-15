@@ -277,15 +277,23 @@ export default defineComponent({
           to: "/query",
         });
 
-        
-                linksList.push({
-                  title: "Workitems",
-                  caption: "Gestisci WI",
-                  icon: "manage_accounts",
-                  to: "/workitems",
-                });
 
-                
+        linksList.push({
+          title: "Workitems",
+          caption: "Gestisci WI",
+          icon: "manage_accounts",
+          to: "/workitems",
+        });
+
+
+        linksList.push({
+          title: "Bot GPT",
+          caption: "Chiedimi qualsiasi cosa",
+          icon: "manage_accounts",
+          to: "/botgpt",
+        });
+
+
         linksList.push({
           title: "Preferenze",
           caption: "pref",
@@ -329,7 +337,7 @@ export default defineComponent({
         q.localStorage.set("as", ip);
         q.localStorage.set("userDb", userDb.toUpperCase());
         model.value = q.localStorage.getItem("userDb").toUpperCase()
-              // Load all the user preferences
+        // Load all the user preferences
         onClickLibdat()
       } else {
         modelId.value[0] = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb").toUpperCase()
