@@ -5,7 +5,8 @@ node_modules
 # Quasar core related directories
 .quasar
 #/dist
-
+../as400_db/.env
+../as400_db/*.env
 # Cordova related directories and files
 /src-cordova/node_modules
 /src-cordova/platforms
