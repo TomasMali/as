@@ -36,27 +36,28 @@
 
 
 
-    <div class="q-pa-md row justify-center" style="height: 600px; overflow-y: scroll;">
+    <div class="q-pa-md row justify-center" style="height: 700px; overflow-y: scroll;">
         <div style="width: 100%; max-width: 800px; max-height: ;">
-            <q-chat-message name="me" :text="meText"
+            <q-chat-message :name='defaultUser()' :text="meText"
                 avatar="https://icons.iconarchive.com/icons/custom-icon-design/pretty-office-2/128/man-icon.png"
                 sent></q-chat-message>
                
-                    <q-chat-message name="Bot" 
+                    <q-chat-message v-if="simpleResponse()" name="Bot" 
+                        avatar="https://icons.iconarchive.com/icons/proycontec/robots/128/robot-screen-settings-icon.png"
+                        bg-color="amber" >
+                    </q-chat-message>
+                    <q-chat-message v-else name="Bot" 
                         avatar="https://icons.iconarchive.com/icons/proycontec/robots/128/robot-screen-settings-icon.png"
                         bg-color="amber" :text="botText">
-                        
                     </q-chat-message>
 
 
             <div class="code-formatter"> <!-- wrapper for the code -->
 
 
-        <!-- <pre><code>
-
-{{ response }}
-            
-        </code></pre> -->
+        <pre v-if="simpleResponse()" ><code>
+            {{ response }}
+        </code></pre>
     </div> 
 
 
@@ -90,6 +91,13 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { botStore } from "../stores/bot";
+import { useQuasar } from "quasar";
+
+const q = useQuasar();
+
+
+const defaultUser = () => q.localStorage.getItem("currentUser")
+
 
 const bot = botStore();
 
@@ -102,6 +110,9 @@ var load = ref(false)
 
 const botText = ref([])
 const meText = ref([])
+
+
+const simpleResponse = ()=> response.value.includes("#") || response.value.includes("//") || response.value.includes("<!-")
 
 
 
@@ -156,7 +167,7 @@ pre {
 
         .code-formatter {
             width: 100%;
-            overflow-x: auto;
+            overflow-y: auto;
             /* enables horizontal scrolling */
         }
 
