@@ -41,35 +41,29 @@
             <q-chat-message :name='defaultUser()' :text="meText"
                 avatar="https://icons.iconarchive.com/icons/custom-icon-design/pretty-office-2/128/man-icon.png"
                 sent></q-chat-message>
-               
-                    <q-chat-message v-if="simpleResponse()" name="Bot" 
-                        avatar="https://icons.iconarchive.com/icons/proycontec/robots/128/robot-screen-settings-icon.png"
-                        bg-color="amber" >
-                    </q-chat-message>
-                    <q-chat-message v-else name="Bot" 
-                        avatar="https://icons.iconarchive.com/icons/proycontec/robots/128/robot-screen-settings-icon.png"
-                        bg-color="amber" :text="botText">
-                    </q-chat-message>
+
+            <q-chat-message v-if="simpleResponse()" name="Bot"
+                avatar="https://icons.iconarchive.com/icons/proycontec/robots/128/robot-screen-settings-icon.png"
+                bg-color="amber">
+            </q-chat-message>
+            <q-chat-message v-else name="Bot"
+                avatar="https://icons.iconarchive.com/icons/proycontec/robots/128/robot-screen-settings-icon.png"
+                bg-color="amber" :text="botText">
+            </q-chat-message>
 
 
-            <div class="code-formatter"> <!-- wrapper for the code -->
+            <div class="code-formatter" bg-color="amber">
 
 
-        <pre v-if="simpleResponse()" ><code>
+        <pre v-if="simpleResponse()">
+            <code>
             {{ response }}
-        </code></pre>
-    </div> 
-
-
+           </code>
+        </pre>
+            </div>
             <q-spinner-dots v-if="load" bg-color="amber" size="2rem"></q-spinner-dots>
         </div>
     </div>
-
-
-  
- 
-
-
 
 
     <div class=" absolute-bottom ">
@@ -80,7 +74,7 @@
 
             </template>
             <template v-slot:after>
-                <q-btn  @click="go" round dense flat icon="send"></q-btn>
+                <q-btn @click="go" round dense flat icon="send"></q-btn>
             </template>
         </q-input>
     </div>
@@ -92,6 +86,7 @@
 import { onMounted, ref } from "vue";
 import { botStore } from "../stores/bot";
 import { useQuasar } from "quasar";
+
 
 const q = useQuasar();
 
@@ -112,7 +107,7 @@ const botText = ref([])
 const meText = ref([])
 
 
-const simpleResponse = ()=> response.value.includes("#") || response.value.includes("//") || response.value.includes("<!-")
+const simpleResponse = () => true//response.value.includes("#") || response.value.includes("//") || response.value.includes("<!-")
 
 
 
@@ -122,7 +117,7 @@ const go = () => getResponse()
 const getResponse = async () => {
 
     botText.value = []
-    meText.value = []
+  //  meText.value = []
     const strToSend = text.value
     text.value = ""
 
@@ -156,32 +151,28 @@ const getResponse = async () => {
 }
 
 pre {
-            font-family: monospace;
-            padding: 10px;
-            border-radius: 5px;
-        }
+    font-family: monospace;
+}
 
-        code {
-            font-family: monospace;
-        }
+code {
+    font-family: monospace;
+}
 
-        .code-formatter {
-            width: 100%;
-            overflow-y: auto;
-            /* enables horizontal scrolling */
-        }
+.code-formatter {
+    width: 100%;
+    overflow-y: auto;
+    /* enables horizontal scrolling */  
+}
 
-        .code-formatter pre {
-            /* style the <pre> element */
-            white-space: pre-wrap;
-            /* allows line breaks within the code block */
-        }
+.code-formatter pre {
+    /* style the <pre> element */
+    white-space: pre-wrap;
+    /* allows line breaks within the code block */
+}
 
-        .code-formatter code {
-            /* style the <code> element */
-            display: block;
-            /* makes it easier to read */
-        }
-
-
+.code-formatter code {
+    /* style the <code> element */
+    display: block;
+    /* makes it easier to read */
+}
 </style>

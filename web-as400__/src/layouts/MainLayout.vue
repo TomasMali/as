@@ -91,7 +91,7 @@
       <!-- Query list -->
       <q-item-label header class="">
         Query preferite
-        <q-avatar class="q-ml-md " size="26px" color="orange">
+        <q-avatar class="q-ml-xl " size="26px" color="orange">
           <span class="material-icons"> star_rate </span>
         </q-avatar>
       </q-item-label>
