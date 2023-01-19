@@ -126,12 +126,16 @@ const getResponse = async () => {
     meText.value.push(strToSend)
     try {
         await bot.setBotRequest(strToSend);
+    //    await bot.sendLogsAction(strToSend);
         response.value = bot.getBotResponse.bot
         botText.value.push(response.value)
 
         console.log(response.value)
         load.value = false
         text.value = ""
+
+   
+
 
     } catch (error) {
         console.log(error);

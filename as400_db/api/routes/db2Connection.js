@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const request = require('request');
 
 
 var ibmdb = require("ibm_db");
@@ -9,7 +10,7 @@ var connStr =
 
 
 require("dotenv").config()
-const {Configuration, OpenAIApi} = require("openai")
+const { Configuration, OpenAIApi } = require("openai")
 
 
 const configuration = new Configuration({
@@ -24,27 +25,53 @@ router.post("/openai", async (req, res, next) => {
 
     try {
         const question = req.body.question;
-    
+
         const response = await openai.createCompletion({
-          model: "text-davinci-003",
-          prompt: `${question}`,
-          temperature: 0, // Higher values means the model will take more risks.
-          max_tokens: 3000, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-          top_p: 1, // alternative to sampling with temperature, called nucleus sampling
-          frequency_penalty: 0.5, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
-          presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
+            model: "text-davinci-003",
+            prompt: `${question}`,
+            temperature: 0, // Higher values means the model will take more risks.
+            max_tokens: 3000, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
+            top_p: 1, // alternative to sampling with temperature, called nucleus sampling
+            frequency_penalty: 0.5, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
+            presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
         });
-       // console.log(response.data);
+        // console.log(response.data);
         res.status(200).send({
-          bot: response.data.choices[0].text,
+            bot: response.data.choices[0].text,
         });
-      } catch (error) {
+    } catch (error) {
         // console.error(error);
         res.status(500).send(error || "Something went wrong");
-      }
-    });
+    }
+});
+
+const axios = require('axios');
 
 
+router.get("/log", async (req, res, next) => {
+    // try {
+    //     request.get(process.env.BOT_ENDPOINT + req.query.log, (err, res, body) => {
+    //         if (err) { return console.log(err); }
+    //         return res.send("hi")
+    //         //  console.log(body);
+
+    //     });
+
+    // } catch (error) {
+    //     // console.error(error);
+    //     res.status(500).send(error || "Something went wrong");
+    // }
+
+
+    axios.get(process.env.BOT_ENDPOINT + req.query.log)
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+});
 
 
 
@@ -143,15 +170,15 @@ router.get("/wis", async (req, res, next) => {
         if (req.query.category == "" && user == "")
             noFilter = " FETCH FIRST 19 ROWS ONLY "
 
-       var  resoltedCondition = ""
+        var resoltedCondition = ""
 
-       console.log(resolted)
+        console.log(resolted)
 
-        if(resolted != ""){
-            if(category != "")
-            resoltedCondition = " AND TRIM(RESOLUTION_DATE) IS  NULL "
+        if (resolted != "") {
+            if (category != "")
+                resoltedCondition = " AND TRIM(RESOLUTION_DATE) IS  NULL "
             else
-            resoltedCondition = " WHERE TRIM(RESOLUTION_DATE) IS  NULL "
+                resoltedCondition = " WHERE TRIM(RESOLUTION_DATE) IS  NULL "
         }
 
 
@@ -159,9 +186,9 @@ router.get("/wis", async (req, res, next) => {
 
         sql = (user === "" ? "" : " SELECT * FROM ") + " (SELECT ID, WORK_ITEM_TYPE,(SELECT DISTINCT (NAME_COL)  FROM MODEL.CATEGORY WHERE ITEM_ID = CATEGORY_ITEM_ID) AS CATEGORIA, CREATION_DATE , MODIFIED, INTERNAL_STATE, RESOLUTION_DATE, SUMMARY,INTERNAL_SEVERITY, INTERNAL_PRIORITY , (SELECT DISTINCT(USER_COL) FROM MARKERS.MARKER WHERE MODIFIED_BY_ITEM_ID  = OWNER_ITEM_ID) AS OWNER_ITEM_ID FROM MODEL.WORK_ITEM " +
             category + resoltedCondition
-            + " ORDER  BY ID DESC ) " + users + noFilter 
+            + " ORDER  BY ID DESC ) " + users + noFilter
 
-            console.log("\n" + sql + "\n");
+        console.log("\n" + sql + "\n");
 
         conn.query(
             sql,
@@ -174,7 +201,7 @@ router.get("/wis", async (req, res, next) => {
                 conn.close(function () {
 
                     res.status(200).json(data);
-                   
+
                 });
             }
         );
