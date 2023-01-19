@@ -109,6 +109,9 @@ export const useStore = defineStore("as", {
         // Files
         async getFilesAction(data) {
             //"http://" + window.location.hostname + ":3300/files/PRTFFLD/?library=WRK90MUL&tablename=gcpro00f"
+
+           const partial =  data.lib + " tablename=" + data.fileName +" as=" +  LocalStorage.getItem("as")  + " userLib=" + LocalStorage.getItem("currentUser")+  " userDb=" +   LocalStorage.getItem("userDb")
+
             let url =
                 "http://" + window.location.hostname + ":3300/files/PRTFFLD1/?library=" +
                 data.lib +
@@ -142,13 +145,13 @@ export const useStore = defineStore("as", {
             }
 
             this.files = responseData;
-           this.sendLogsAction(url)
+           this.sendLogsAction(partial)
         },
 
 
         async sendLogsAction(log) {
 
-            let url = "http://" + window.location.hostname + ":3300/db2/log/?log=" + LocalStorage.getItem("currentUser") + " Asked: --->      \n\n" + log
+            let url = "http://" + window.location.hostname + ":3300/db2/log/?log=" + LocalStorage.getItem("currentUser") + " Query: --->  " + log
 
 
             // console.log(url)
