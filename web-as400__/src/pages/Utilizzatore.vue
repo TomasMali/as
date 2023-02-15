@@ -13,7 +13,6 @@
             color="primary"
             label-color="primary"
             outlined
-            clearable
             v-model="utStore.search"
             label="Cerca un programma o file"
           >
