@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 
 const tab = require("./api/routes/descriptionTables");
 const db2 = require("./api/routes/db2Connection");
+const utilizzatori = require("./api/routes/utilizzatori");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -34,6 +35,7 @@ console.log("SERVER RUNNING ON PORT 3300...")
     // just go to the ather file if you pass me ...
 app.use("/files", tab);
 app.use("/db2", db2);
+app.use("/utilizzatori", utilizzatori)
 
 // if the user requires a path that doesnt exsists, i throw an error
 app.use((req, ser, next) => {

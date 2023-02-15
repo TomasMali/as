@@ -58,9 +58,9 @@
       <!-- Research List -->
       <q-item-label header class="">
         Ricerche più recenti
-        <q-avatar class="q-ml-md " size="26px" color="orange">
+        <!-- <q-avatar class="q-ml-md " size="26px" color="orange">
           <span class="material-icons"> star_rate </span>
-        </q-avatar>
+        </q-avatar> -->
       </q-item-label>
 
       <div style="max-height: 250px; overflow: auto">
@@ -91,9 +91,9 @@
       <!-- Query list -->
       <q-item-label header class="">
         Query preferite
-        <q-avatar class="q-ml-xl " size="26px" color="orange">
+        <!-- <q-avatar class="q-ml-xl " size="26px" color="orange">
           <span class="material-icons"> star_rate </span>
-        </q-avatar>
+        </q-avatar> -->
       </q-item-label>
 
 
@@ -287,9 +287,17 @@ export default defineComponent({
 
 
         linksList.push({
+          title: "Trova programma/file",
+          caption: "Trova utilizzatore",
+          icon: "verified",
+          to: "/utilizzatore",
+        });
+
+
+        linksList.push({
           title: "Bot GPT",
           caption: "Chiedimi qualsiasi cosa",
-          icon: "manage_accounts",
+          icon: "chat",
           to: "/botgpt",
         });
 

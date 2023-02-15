@@ -31,7 +31,12 @@ const routes = [{
                 path: "workitems",
                 component: () =>
                     import ("pages/Workitems.vue"),
-            },
+            },   
+            {
+                path: "utilizzatore",
+                component: () =>
+                    import ("pages/Utilizzatore.vue"),
+            }, 
             {
                 path: "botgpt",
                 component: () =>
