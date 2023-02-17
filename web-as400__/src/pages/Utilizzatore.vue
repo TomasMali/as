@@ -1,6 +1,3 @@
-
-
-
 <template>
   <div>
     <q-card bordered class="q-my-sm q-mx-md">
@@ -31,7 +28,7 @@
             :disable="utStore.search.length < 3"
           />
 
-          <div class="q-mx-xl scritta">
+          <!-- <div class="q-mx-xl scritta">
             <q-toggle
               dense
               v-model="utStore.showoccurence"
@@ -40,18 +37,8 @@
               label="Mostra Occorrenze"
               color="purple"
             />
-          </div>
-
-          <!-- <div class="q-mx-lg scritta">
-            <q-toggle
-              dense
-              v-model="utStore.includesql"
-              size="xl"
-              icon="visibility"
-              label="Cerca anche file"
-              color="purple"
-            />
           </div> -->
+
         </div>
       </q-card-section>
     </q-card>
@@ -62,12 +49,12 @@
                   {{wiStore.getWis }}
               </pre> -->
 
+        <!-- :columns="columns" -->
         <q-table
           class="text-subtitle2 my-sticky-header-table"
           table-header-class="text-white "
           :rows="utStore.utilizzatori"
           row-key="utStore.getUtilizzatori.SRCCT"
-          dense
           auto-width
           :loading="utStore.loading"
           boarderd
@@ -80,7 +67,7 @@
           ref="tabCol"
           :grid="utStore.grid"
         >
-        <template v-slot:top-right>
+          <template v-slot:top-right>
             <q-input
               borderless
               dense
@@ -93,27 +80,145 @@
                 <q-toggle v-model="utStore.grid" color="red" label="Grid" />
               </template>
             </q-input>
+          </template>
+          <template v-slot:loading>
+            <q-inner-loading showing color="primary" />
+          </template>
+
+          <template v-slot:body="props">
+            <q-tr :props="props" @click="onRowClick(props.row)">
+              <q-td key="SRCCT" :props="props">
+                <q-badge color="purple" class="q-pa-sm">
+                  {{ props.row.SRCCT }}
+                </q-badge>
+              </q-td>
+              <q-td key="SRCTCT" :props="props">
+                {{ props.row.SRCTCT }}
+              </q-td>
+              <q-td key="LIBRCT" :props="props">
+                {{ props.row.LIBRCT }}
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
+      </q-card-section>
+    </q-card>
+
+
+    <q-dialog
+      v-model="utStore.dialog"
+      persistent
+      :maximized="utStore.maximizedToggle"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card class="bg-primary text-white">
+        <q-bar>
+          <q-space />
+
+          <q-btn
+            dense
+            flat
+            icon="minimize"
+            @click="utStore.maximizedToggle = false"
+            :disable="!utStore.maximizedToggle"
+          >
+            <q-tooltip v-if="utStore.maximizedToggle" class="bg-white text-primary"
+              >Minimize</q-tooltip
+            >
+          </q-btn>
+          <q-btn
+            dense
+            flat
+            icon="crop_square"
+            @click="utStore.maximizedToggle = true"
+            :disable="utStore.maximizedToggle"
+          >
+            <q-tooltip v-if="!utStore.maximizedToggle" class="bg-white text-primary"
+              >Maximize</q-tooltip
+            >
+          </q-btn>
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip class="bg-white text-primary">Close</q-tooltip>
+          </q-btn>
+        </q-bar>
+
+        <q-card-section>
+          <div class="text-h6">
+            {{  "Cerchiamo: " + utStore.search + "  ---------->  " + utStore.selectedRow.LIBRCT + "." + utStore.selectedRow.SRCCT }}
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+        
+          <q-table
+          class="text-subtitle2 my-sticky-header-table"
+          table-header-class="text-white "
+          :rows="utStore.programRow"
+          row-key="utStore.programRow.SRCDAT"
+          dense
+          auto-width
+          :loading="utStore.loadProgram"
+          title="Risultato programmi"
+          separator="none"
+          style="height: 720px"
+          :filter="utStore.filterProgram"
+          :rowsPerPage="10000"
+          :rows-per-page-options="[0, 8, 18]"
+          ref="tabCol"
+          :grid="utStore.gridProgram"
+        >
+        <template v-slot:top-right>
+            <q-input
+              borderless
+              dense
+              debounce="300"
+              v-model="utStore.filterProgram"
+              placeholder="Search"
+            >
+              <template v-slot:append>
+                <q-icon name="search" color="white" />
+                <q-toggle v-model="utStore.gridProgram" color="red" label="Grid" />
+              </template>
+            </q-input>
 
           </template>
           <template v-slot:loading>
             <q-inner-loading showing color="primary" />
           </template>
+
+
+
+          <template v-slot:body="props">
+            <q-tr :props="props" >
+              <q-td key="SRCDAT" :props="props">
+                  {{ props.row.SRCDAT }}
+              </q-td>
+              <q-td key="SRCDTA" :props="props">
+                <q-badge v-if="props.row.SRCDTA.includes(utStore.search)" color="purple" class="q-pa-sm">
+                {{ props.row.SRCDTA }}
+              </q-badge>
+              <div v-else>
+                {{ props.row.SRCDTA }}
+              </div>
+              </q-td>
+              <q-td key="SRCSEQ" :props="props">
+                {{ props.row.SRCSEQ }}
+              </q-td>
+            </q-tr>
+          </template>
+
+
+
         </q-table>
-      </q-card-section>
-    </q-card>
+      
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
-  
-  
-
-
-
-
-
-
 
 <script setup>
-import { onMounted, ref } from "vue";
 import { uttilStore } from "../stores/uttil";
 
 const utStore = uttilStore();
@@ -127,27 +232,48 @@ const onClickUtt = () => {
 const loadUtt = async () => {
   try {
     const data = {
-     showoccurence: utStore.showoccurence ? "s" : "",
-    //  includesql: utStore.includesql ? "s" : "",
+      showoccurence: utStore.showoccurence ? "s" : "",
+      //  includesql: utStore.includesql ? "s" : "",
       programName: utStore.search,
     };
 
-    console.log(data);
-
     utStore.loading = true;
     await utStore.setUtilizzatori(data);
-
-    console.log(utStore.getUtilizzatori);
-
     utStore.loading = false;
   } catch (error) {
     console.log(error);
   }
 };
+
+const onRowClick = (row) => {
+  utStore.dialog = true;
+  utStore.selectedRow = row;
+
+  const data = {
+    programName: row.SRCCT,
+    lib: row.LIBRCT,
+    filetype: row.SRCTCT,
+  };
+
+  loadProgram(data)
+};
+
+const loadProgram = async (data) => {
+  try {
+    utStore.loadProgram = true;
+    await utStore.setProgram(data);
+    utStore.loadProgram = false;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const columns = [
+  { name: "SRCCT", label: "Nome programma", field: "SRCCT", sortable: true },
+  { name: "SRCTCT", label: "Tipo", field: "SRCTCT", sortable: true },
+  { name: "LIBRCT", label: "Libreria", field: "LIBRCT", sortable: true },
+];
 </script>
-
-
-
 
 <style lang="sass">
 .scritta .q-toggle div.q-toggle__label.q-anchor--skip
@@ -164,7 +290,6 @@ const loadUtt = async () => {
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px
-
   .q-table__top,
   .q-table__bottom,
   thead tr:first-child th
