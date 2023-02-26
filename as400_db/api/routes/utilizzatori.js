@@ -13,13 +13,15 @@ router.get("/find", async (req, res, next) => {
   // const show_only_progrm = " SELECT SRCCT , LIBRCT   FROM PALSV.CAT_SORGEN cs WHERE trim(ROWCT) LIKE '%" + req.query.programName + "%'" + (req.query.includesql === 's' ? "" : " AND SRCTCT <> 'SQL'")
 
   const sql =
-    "SELECT " +
+    "SELECT * FROM (SELECT " +
     (req.query.showoccurence === "s" ? "" : "DISTINCT") +
     "  SRCCT, LIBRCT, SRCTCT " +
     (req.query.showoccurence === "s" ? ",ROWCT" : "") +
-    " FROM PALSV.CAT_SORGEN  WHERE  TRIM(ROWCT) LIKE '%" +
+    " FROM PALSV.CAT_SORGEN  WHERE  TRIM(ROWCT) LIKE 'CALLP " +
     req.query.programName.toUpperCase() +
-    "%'  order by LIBRCT DESC";
+    "%' OR TRIM(ROWCT) LIKE 'CALL " +
+    req.query.programName.toUpperCase() +
+    "%') C  order by LIBRCT DESC";
 
   console.log(sql);
 

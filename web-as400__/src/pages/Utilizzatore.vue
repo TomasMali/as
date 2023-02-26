@@ -195,7 +195,7 @@
                   {{ props.row.SRCDAT }}
               </q-td>
               <q-td key="SRCDTA" :props="props">
-                <q-badge v-if="props.row.SRCDTA.includes(utStore.search)" color="purple" class="q-pa-sm">
+                <q-badge v-if="props.row.SRCDTA.includes(utStore.search.toUpperCase())" color="purple" class="q-pa-sm">
                 {{ props.row.SRCDTA }}
               </q-badge>
               <div v-else>

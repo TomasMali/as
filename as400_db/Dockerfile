@@ -25,5 +25,5 @@ CMD [ "npm", "start" ]
 # sudo docker run --name backend -it --rm -v "/home/tommal/Desktop/web-as400/as400_db:/app" -v /app/node_modules -p 3300:3300 backend
 
 
-# sudo docker build -t backend .
+# sudo docker build -t tommal/as .
 #docker run -it -d --restart always -p 3300:3300 --name c-as tommal/as
