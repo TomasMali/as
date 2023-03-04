@@ -195,6 +195,7 @@ export default defineComponent({
     };
 
     const exec = async (sql) => {
+      router.push({ path: '/', hash: '#home' })
       queryStr.loadingTable = true;
       await queryStr.excecQuery(q.localStorage.getItem("currentUser"), sql);
       queryStr.loadingTable = false;
@@ -202,6 +203,7 @@ export default defineComponent({
     };
 
     const execFromMenu = (item) => {
+      router.push({ path: '/', hash: '#home' })
       queryStr.setFilenameSelected(item)
     };
 
