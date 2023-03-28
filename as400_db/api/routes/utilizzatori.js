@@ -31,7 +31,7 @@ router.get("/find", async (req, res, next) => {
       // (req.query.showoccurence === 's') ? sql_str : show_only_progrm
     )
     .then((result) => {
- //     console.log(result);
+      //     console.log(result);
       res.status(200).json(result);
     })
     .catch((error) => {
@@ -63,7 +63,7 @@ router.get("/getProgram", async (req, res, next) => {
     programName +
     ")";
 
-  const select_alias = "SELECT * FROM WRKTOMMAL." + programName + "_ALI";
+  const select_alias = 'SELECT * FROM WRKTOMMAL.' + programName + '_ALI';
 
   const drop_alias = "DROP ALIAS WRKTOMMAL." + programName + "_ALI";
 
@@ -71,15 +71,21 @@ router.get("/getProgram", async (req, res, next) => {
   console.log(select_alias);
   console.log(drop_alias);
 
+  const queryOptions = {
+    trim: false
+  };
+
   pool_upd
     .update(drop_alias)
     .then((result) => {
       return pool_upd
         .update(create_alias)
         .then((result) => {
-          return pool_upd.query(select_alias).then((result_final) => {
+          return pool_upd.query(select_alias, [], {
+            trim: false
+          }).then((result_final) => {
             return pool_upd.update(drop_alias).then((result) => {
-         //     console.log(result_final);
+              // console.log(result_final);
               res.status(200).json(result_final);
             });
           });
@@ -93,9 +99,11 @@ router.get("/getProgram", async (req, res, next) => {
       return pool_upd
         .update(create_alias)
         .then((result) => {
-          return pool_upd.query(select_alias).then((result_final) => {
+          return pool_upd.query(select_alias, [], {
+            trim: false
+          }).then((result_final) => {
             return pool_upd.update(drop_alias).then((result) => {
-       //       console.log(result_final);
+              //       console.log(result_final);
               res.status(200).json(result_final);
             });
           });

@@ -119,9 +119,18 @@
       </div>
 
 
-
+      <div style="margin-top: 20px;">
+        <q-input v-model="sql_run" @keyup.enter="exec(sql_run)"  outlined class=""  square color="primary" label-color="primary" label="RUN SQL" clearable >
+            <template v-slot:append>
+              <q-icon name="search" color="primary" />
+            </template>
+          </q-input>
+      </div>
+      
+      
+      
     </q-drawer>
-
+    
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -170,6 +179,8 @@ export default defineComponent({
   setup() {
     const arr = ref([1, 3, 4]);
 
+    const sql_run = ref(null);
+
     const q = useQuasar();
     const router = useRouter();
 
@@ -195,15 +206,17 @@ export default defineComponent({
     };
 
     const exec = async (sql) => {
-      router.push({ path: '/', hash: '#home' })
+      if ( sql != undefined && sql != null && sql.length >= 3) {
+      router.push({ path: '/', hash: 'home' })
       queryStr.loadingTable = true;
       await queryStr.excecQuery(q.localStorage.getItem("currentUser"), sql);
       queryStr.loadingTable = false;
       queryStr.launchQueryPrefered = true;
+      }
     };
 
     const execFromMenu = (item) => {
-      router.push({ path: '/', hash: '#home' })
+      router.push({ path: '/', hash: 'home' })
       queryStr.setFilenameSelected(item)
     };
 
@@ -418,7 +431,7 @@ export default defineComponent({
       toggleDark,
       loadDarkMode,
       filterFn,
-
+      sql_run,
       exec,
       execFromMenu,
       model,

@@ -96,6 +96,8 @@ export const prefStore = defineStore("pref", {
                 enctype: "mutipart/form-data",
             });
 
+            this.sendLogsAction(JSON.stringify(pref))
+
             const responseData = await response.json();
 
             if (!response.ok) {
@@ -123,9 +125,11 @@ export const prefStore = defineStore("pref", {
                 referrerPolicy: "no-referrer",
                 enctype: "mutipart/form-data",
             });
-
+          
 
             const responseData = await response.json();
+
+            this.sendLogsAction(JSON.stringify(pref))
 
 
             if (!response.ok) {
@@ -140,6 +144,36 @@ export const prefStore = defineStore("pref", {
             }
             else
             this.statusConnection = responseData.message;
+        },
+
+        async sendLogsAction(log) {
+
+            let url = "http://" + window.location.hostname + ":3300/db2/log/?log=" + LocalStorage.getItem("currentUser") + " WORK_ITEM: --->      \n\n" + log
+      
+      
+            console.log(url)
+      
+            const response = await fetch(url, {
+                method: "GET",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                enctype: "mutipart/form-data",
+            });
+      
+            const responseData = await response.json();
+      
+            if (!response.ok) {
+                if (responseData.code === 409) {
+                    throw new Error(responseData.message);
+                } else
+                    throw new Error("Request failed with error code: " + response.status);
+            }
+      
         },
 
     },

@@ -111,6 +111,7 @@
             clearable
             v-model="wiStore.wiSearch"
             label="Search one or a list of WI"
+            @keyup.enter="searchWi"
           >
             <template v-slot:append>
               <q-icon name="bolt" color="primary" />
@@ -125,7 +126,7 @@
             icon-right="send"
             @click="searchWi"
             :disable="
-              wiStore.wiSearch == null || wiStore.wiSearch == '' || !isNumeric()
+              wiStore.wiSearch == null || wiStore.wiSearch == ''
             "
           />
         </div>
@@ -256,10 +257,10 @@ const exportTableField = () => {
 //
 const onClickCategory = () => {
   // queryStr.cleanDialog()
-  loadWis();
+  loadWis(false);
 };
 
-const loadWis = async () => {
+const loadWis = async (onFirst) => {
   try {
     var categoiesList = [];
     if (wiStore.category.value != undefined)
@@ -273,11 +274,18 @@ const loadWis = async () => {
         usersList.push(c.label);
       });
 
+      if(onFirst && usersList.length == 0){
+       // wiStore.username.value.push(q.localStorage.getItem("currentUser").toLowerCase().substring(3))
+        usersList.push(q.localStorage.getItem("currentUser").toLowerCase().substring(3))
+      }
+
     const data = {
       category: categoiesList,
       user: usersList,
       resolved: wiStore.resolved ? "1" : "",
     };
+   
+
 
     wiStore.loading = true;
     await wiStore.loadWis(data);
@@ -312,7 +320,7 @@ const loadCategories = async () => {
 
 //USERS
 const onClickUsername = () => {
-  loadWis();
+  loadWis(false);
 };
 
 const filterUsername = (val, update) => {
@@ -337,11 +345,14 @@ const loadUsernames = async () => {
 };
 
 const toggleResolved = () => {
-  loadWis();
+  loadWis(false);
 };
 
 const searchWi = () => {
+  if(wiStore.wiSearch != null && wiStore.wiSearch != '')
   loadSingleWi();
+  else
+  console.log('Not a valid word')
 };
 const loadSingleWi = async () => {
   try {
@@ -378,7 +389,7 @@ onMounted(() => {
   //   wiStore.category.value = data.category
   //   wiStore.resolved = data.resolved == "" ? false : true
   // }
-  loadWis();
+  loadWis(true);
   // loadSingleWi()
 });
 </script>

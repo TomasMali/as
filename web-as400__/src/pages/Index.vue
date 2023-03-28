@@ -10,7 +10,7 @@
 
           <div class="col flex q-pa-md" style="border-style: ridge">
             <q-input dense style="width: 170px" square color="primary" label-color="primary" outlined clearable
-              v-model="fastWordSearch" label="Fast Search">
+              v-model="fastWordSearch" label="Fast Search" @keyup.enter="fastSearch">
               <template v-slot:append>
                 <q-icon name="bolt" color="primary" />
               </template>
@@ -40,9 +40,8 @@
             </template>
           </q-select>
           <q-select class="q-ml-md" style="max-height: 500px" dense filled v-model="fileNameModel" use-input
-            :loading="loadingInputFiles" :disable="loadingInputFiles" input-debounce="0" label="FILE" autofocus
-            clearable :options="fileNamesOptions" @filter="filterFileNames" @update:model-value="onClickFilename"
-            behavior="menu">
+            :loading="loadingInputFiles" :disable="loadingInputFiles" input-debounce="0" label="FILE" autofocus clearable
+            :options="fileNamesOptions" @filter="filterFileNames" @update:model-value="onClickFilename" behavior="menu">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey">No results</q-item-section>
@@ -52,6 +51,15 @@
           <div class="q-ml-lg scritta">
             <q-toggle dense v-model="queryToggle" size="xl" icon="visibility" label="Show 500" color="red" />
           </div>
+
+
+          <!-- <q-select dense filled v-model="libDatModel" use-input input-debounce="0" label="LIBDAT" clearable
+            :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
+          </q-select> -->
+
+
+
+
         </div>
       </q-card-section>
     </q-card>
@@ -98,8 +106,8 @@
 
 
     <q-table v-else-if="queryStr.queries.length" :loading="queryStr.loadingTable"
-      class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" title="Risultati query" dense
-      boarderd auto-width separator="cell" :rows="queryStr.queries" row-key="name" :rowsPerPage="30"
+      class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" title="Risultati query" dense boarderd
+      auto-width separator="cell" :rows="queryStr.queries" row-key="name" :rowsPerPage="30"
       :rows-per-page-options="[0, 8, 18]" style="height: 640px" :filter="queryStr.filter" :grid="queryStr.grid"
       ref="queryTab">
       <template v-slot:loading>
@@ -498,7 +506,7 @@ export default {
      * Loads the table with the fast searching word
      */
     async loadFastFiles() {
-      if (this.fastWordSearch !== "") {
+      if (this.fastWordSearch.length >= 3) {
         this.loading = true;
         this.rows = [];
         try {

@@ -21,7 +21,9 @@ export const uttilStore = defineStore("uttil", {
             programRow: [],
             loadProgram: false,
             filterProgram: "",
-            gridProgram: false
+            gridProgram: false,
+            //
+            searchProgram: ref(''),
         };
     },
     getters: {
