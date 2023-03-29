@@ -1,7 +1,7 @@
 <template>
-  <div class="">
-    <q-card bordered class="q-my-sm q-mx-md">
-      <q-card-section class="">
+  <div class="q-pa-xs">
+    <!-- <q-card bordered class="q-my-sm q-mx-md"> -->
+      <q-card-section class="shadow-10">
         <div class="row q-mb-md">
           <div class="col q-mr-md" style="border-style: ridge" v-if="pref.getUserPrefAsObj.length > 0">
             <q-option-group class="q-mt-md" v-model="group" @update:model-value="onGroupChange"
@@ -9,7 +9,7 @@
           </div>
 
           <div class="col flex q-pa-md" style="border-style: ridge">
-            <q-input dense style="width: 170px" square color="primary" label-color="primary" outlined clearable
+            <q-input dense style="width: 250px" square color="primary" label-color="primary" outlined clearable
               v-model="fastWordSearch" label="Fast Search" @keyup.enter="fastSearch">
               <template v-slot:append>
                 <q-icon name="bolt" color="primary" />
@@ -51,18 +51,14 @@
           <div class="q-ml-lg scritta">
             <q-toggle dense v-model="queryToggle" size="xl" icon="visibility" label="Show 500" color="red" />
           </div>
-
-
           <!-- <q-select dense filled v-model="libDatModel" use-input input-debounce="0" label="LIBDAT" clearable
             :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
           </q-select> -->
-
-
-
-
         </div>
       </q-card-section>
-    </q-card>
+
+
+   <div class="q-pa-md ">
     <!-- Table 1 -->
     <q-table :loading="loadingTable" v-if="!queryToggle && !queryStr.launchQueryPrefered" dense auto-width
       class="text-subtitle2 my-sticky-header-table " table-header-class="text-white" :grid="grid" :rows="rows"
@@ -74,7 +70,7 @@
 
       <template v-slot:top-right>
         <q-icon name="search" size="sm" class="q-mr-sm" color="white" />
-        <q-input class=" " borderless dense v-model="filter" placeholder="Search word">
+        <q-input class=" " borderless clearable dense v-model="filter" placeholder="Search word">
           <template v-slot:append>
             <q-toggle v-model="grid" color="red" label="Grid" />
           </template>
@@ -90,7 +86,7 @@
       :grid="grid" :loading="loading" boarderd :title="fileNameModel" separator="cell" style="height: 640px"
       :filter="filter" :rowsPerPage="10000" :rows-per-page-options="[0, 8, 18]" ref="tabCol">
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" clearable v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" color="white" />
             <q-toggle v-model="grid" color="red" label="Grid" />
@@ -102,9 +98,6 @@
       </template>
     </q-table>
     <!-- Table 3 -->
-
-
-
     <q-table v-else-if="queryStr.queries.length" :loading="queryStr.loadingTable"
       class="text-subtitle2 my-sticky-header-table" table-header-class="text-white" title="Risultati query" dense boarderd
       auto-width separator="cell" :rows="queryStr.queries" row-key="name" :rowsPerPage="30"
@@ -115,7 +108,7 @@
       </template>
 
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="queryStr.filter" placeholder="Search word">
+        <q-input borderless dense debounce="300" clearable v-model="queryStr.filter" placeholder="Search word">
           <template v-slot:append>
             <q-icon name="search" color="white" />
             <q-toggle color="red" v-model="queryStr.grid" label="Grid" />
@@ -125,11 +118,12 @@
           @click="exportTableQuery" />
       </template>
     </q-table>
+  </div>
 
     <!--  <h1>{{as.getQueries}}</h1> -->
     <div v-if="(libDatModelComputed && false)">
     </div>
-
+  <!-- </q-card> -->
   </div>
 </template>
 

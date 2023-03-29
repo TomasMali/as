@@ -22,6 +22,7 @@ const openai = new OpenAIApi(configuration)
 
 
 router.post("/openai", async (req, res, next) => {
+    console.log("ecco qui")
 
     try {
         const question = req.body.question;
@@ -40,7 +41,7 @@ router.post("/openai", async (req, res, next) => {
             bot: response.data.choices[0].text,
         });
     } catch (error) {
-        // console.error(error);
+        console.error(error);
         res.status(500).send(error || "Something went wrong");
     }
 });

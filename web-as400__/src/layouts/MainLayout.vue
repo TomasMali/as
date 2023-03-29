@@ -119,8 +119,8 @@
       </div>
 
 
-      <div style="margin-top: 20px;">
-        <q-input v-model="sql_run" @keyup.enter="exec(sql_run)"  outlined class=""  square color="primary" label-color="primary" label="RUN SQL" clearable >
+      <div  class="absolute-bottom q-mb-xs shadow-10 q-pa-xs ">
+        <q-input v-model="sql_run" @keyup.enter="exec(sql_run)"  outlined  square color="primary" label-color="primary" label="Esegui subito SQL qui" clearable >
             <template v-slot:append>
               <q-icon name="search" color="primary" />
             </template>
@@ -310,10 +310,17 @@ export default defineComponent({
 
 
         linksList.push({
-          title: "Bot GPT",
+          title: "ChatGPT",
           caption: "Chiedimi qualsiasi cosa",
           icon: "chat",
           to: "/botgpt",
+        });
+
+        linksList.push({
+          title: "Condividi file",
+          caption: "Condividi qualsiasi cosa",
+          icon: "share",
+          to: "/share",
         });
 
 

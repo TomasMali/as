@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="q-px-xl">
+    <div class="q-px-xl q-mt-xl">
       <q-card class="my-card">
         <q-card-section>
           <!-- Botton that create a SQL-->

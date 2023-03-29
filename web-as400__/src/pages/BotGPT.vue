@@ -3,7 +3,6 @@
 
 
 <template>
-
     <!-- <q-card v-if="response != ''" class="my-card q-ma-lg justify-center">
         <q-card-section style="display: flex; justify-content: center; align-items: center;">
             <pre>
@@ -28,10 +27,10 @@
 
 
             <q-circular-progress indeterminate size="45px" :thickness="1" color="purple-8"
-                class="q-ma-md justify-center" />
+                            class="q-ma-md justify-center" />
 
-        </q-card-section>
-    </q-card> -->
+                    </q-card-section>
+                </q-card> -->
 
 
 
@@ -51,34 +50,41 @@
                 bg-color="amber" :text="botText">
             </q-chat-message>
 
-
             <div class="code-formatter" bg-color="amber">
-
-
-        <pre v-if="simpleResponse()">
-            <code>
-            {{ response }}
-           </code>
-        </pre>
+                <pre v-if="simpleResponse()">
+                        <code>
+                        {{ response }}
+                       </code>
+                    </pre>
             </div>
             <q-spinner-dots v-if="load" bg-color="amber" size="2rem"></q-spinner-dots>
         </div>
     </div>
 
+    <div class="absolute-bottom">
 
-    <div class=" absolute-bottom ">
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col">
+                <div class="col">
+                </div>
+                <q-input outlined bottom-slots @keyup.enter="go" v-model="text" label="Chiedimi qualsiasi cosa">
+                    <template v-slot:append>
+                        <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer"></q-icon>
 
-        <q-input outlined bottom-slots @keyup.enter="go" v-model="text" label="Chiedimi qualsiasi cosa">
-            <template v-slot:append>
-                <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer"></q-icon>
+                    </template>
+                    <template v-slot:after>
+                        <q-btn @click="go" round dense flat icon="send"></q-btn>
+                    </template>
+                </q-input>
+            </div>
+            <div class="col">
+            </div>
 
-            </template>
-            <template v-slot:after>
-                <q-btn @click="go" round dense flat icon="send"></q-btn>
-            </template>
-        </q-input>
+        </div>
+
     </div>
-
 </template>
 
 
@@ -118,7 +124,7 @@ const go = () => getResponse()
 const getResponse = async () => {
 
     botText.value = []
-  //  meText.value = []
+    //  meText.value = []
     const strToSend = text.value
     text.value = ""
 
@@ -127,7 +133,7 @@ const getResponse = async () => {
     meText.value.push(strToSend)
     try {
         await bot.setBotRequest(strToSend);
-    //    await bot.sendLogsAction(strToSend);
+        //    await bot.sendLogsAction(strToSend);
         response.value = bot.getBotResponse.bot
         botText.value.push(response.value)
 
@@ -135,7 +141,7 @@ const getResponse = async () => {
         load.value = false
         text.value = ""
 
-   
+
 
 
     } catch (error) {
@@ -150,9 +156,7 @@ const getResponse = async () => {
 <style>
 .absolute-bottom {
     position: absolute;
-    bottom: 0;
-    width: 70%;
-    margin-left: 400px;
+
 }
 
 pre {
@@ -166,7 +170,7 @@ code {
 .code-formatter {
     width: 100%;
     overflow-y: auto;
-    /* enables horizontal scrolling */  
+    /* enables horizontal scrolling */
 }
 
 .code-formatter pre {

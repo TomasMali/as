@@ -1,6 +1,6 @@
 <template>
-  <div class="q-pa-md row items-start q-gutter-md">
-    <q-card bordered class="my-card">
+  <div class="q-pa-md row items-start q-gutter-md q-mt-md ">
+    <q-card bordered class="my-card shadow-10">
       <q-card-section>
         <div class="text-h6">Librerie preferite</div>
       </q-card-section>
@@ -78,7 +78,7 @@
 
 
 
-    <q-card bordered class="my-card">
+    <q-card bordered class="my-card shadow-10">
       <q-card-section>
         <div class="text-h6">Inserisci nuova connessione</div>
       </q-card-section>
