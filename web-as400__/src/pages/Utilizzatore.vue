@@ -101,7 +101,7 @@
 
           <q-table class="text-subtitle2 my-sticky-header-table" table-header-class="text-white "
             :rows="utStore.programRow" row-key="utStore.programRow.SRCDAT" dense auto-width :loading="utStore.loadProgram"
-            title="Risultato programmi" separator="none" style="height: 720px" :filter="utStore.filterProgram"
+            title="Risultato programmi" separator="none" style=" height: 85vh;" :filter="utStore.filterProgram"
             :rowsPerPage="10000" :rows-per-page-options="[0, 8, 18]" ref="tabCol" :grid="utStore.gridProgram">
             <template v-slot:top-right>
               <q-input borderless dense debounce="300" v-model="utStore.filterProgram" placeholder="Search">
