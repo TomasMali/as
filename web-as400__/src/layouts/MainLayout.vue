@@ -89,11 +89,8 @@
 
 
       <!-- Query list -->
-      <q-item-label header class="">
+      <!-- <q-item-label header class="">
         Query preferite
-        <!-- <q-avatar class="q-ml-xl " size="26px" color="orange">
-          <span class="material-icons"> star_rate </span>
-        </q-avatar> -->
       </q-item-label>
 
 
@@ -116,7 +113,7 @@
             </q-item-section>
           </q-item>
         </q-list>
-      </div>
+      </div> -->
 
 
       <div  class="absolute-bottom q-mb-xs shadow-10 q-pa-xs ">
