@@ -49,7 +49,7 @@
             </template>
           </q-select>
           <div class="q-ml-lg scritta">
-            <q-toggle dense v-model="queryToggle" size="xl" icon="visibility" label="Show 500" color="red" />
+            <q-toggle dense v-model="queryToggle" size="xl" icon="visibility" @update:model-value="clearFastSearch" label="Show 500" color="red" />
           </div>
           <!-- <q-select dense filled v-model="libDatModel" use-input input-debounce="0" label="LIBDAT" clearable
             :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
@@ -524,11 +524,19 @@ export default {
         }
       }
     },
+
+    clearFastSearch(){
+      this.fastWordSearch = null
+      this.searchFile = false
+    },
     onClickLibdat(rr) {
       this.loadFilenames();
       this.fileNameModel = null;
     },
     onClickFilename(rr) {
+
+      this.fastWordSearch = null
+      this.searchFile = false
       // Update LocalStorage
       this.loadFiles();
       this.updateLocalStorageForFastResearch();

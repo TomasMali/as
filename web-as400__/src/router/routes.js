@@ -48,6 +48,16 @@ const routes = [{
                     import ("pages/Share.vue"),
             },
             {
+                path: "diff",
+                component: () =>
+                    import ("pages/Diff.vue"),
+            },
+            {
+                path: "note",
+                component: () =>
+                    import ("pages/Note.vue"),
+            },
+            {
                 path: "preference",
                 component: () =>
                     import ("pages/Preference.vue"),

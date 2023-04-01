@@ -147,28 +147,6 @@ router.get("/", async (req, res, next) => {
         });
 });
 
-// SELECT * FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = 'WRK90MUL' AND TABLE_NAME = 'GCMOV00F'
-// http://localhost:3000/files/PRTFFLD/?library=WRK90MUL&tablename=gcpro00f
-// router.get("/PRTFFLD", async (req, res, next) => {
-//     var q = req.query;
-
-//     pool_upd = await pool(req.query.library, req.query.as)
-
-//     console.log("GET: " + q.library.toUpperCase() + "\n");
-//     console.log("GET: " + q.tablename.toUpperCase() + "\n");
-//     pool_upd
-//         .query(
-//             "SELECT COLUMN_NAME, COLUMN_TEXT , DATA_TYPE, LENGTH,NUMERIC_SCALE, CHARACTER_MAXIMUM_LENGTH, COLUMN_DEFAULT FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = ? AND TABLE_NAME = ?", [q.library.toUpperCase(), q.tablename.toUpperCase()]
-//         )
-//         .then((result) => {
-//             res.status(200).json(result);
-//         })
-//         .catch((error) => {
-//             res.status(404);
-//             console.log("error");
-//             console.log(error);
-//         });
-// });
 
 // SELECT * FROM QSYS2.SYSCOLUMNS WHERE  TABLE_SCHEMA = 'WRK90MUL' AND TABLE_NAME = 'GCMOV00F'
 // http://localhost:3300/files/PRTFFLD1/?library=WRK90MUL&tablename=gcpro00f
@@ -316,6 +294,91 @@ router.get("/SCHEMA", async (req, res, next) => {
         )
         .then((result) => {
             res.status(200).json(result);
+        })
+        .catch((error) => {
+            res.status(404);
+            console.log("error");
+            console.log(error);
+        });
+});
+
+
+
+
+
+/**
+ * 
+ */
+router.get("/getUserNote", async (req, res, next) => {
+
+    let username = req.query.username
+
+    pool_upd = await pool("fake", "fake")
+
+    const sql_str = "SELECT CONTENT FROM WRKTOMMAL.QUILL WHERE USERNAME = '" + username + "'"
+
+    pool_upd
+        .query(
+            sql_str
+        )
+        .then((result) => {
+            res.status(200).json(result);
+        })
+        .catch((error) => {
+            console.log("error");
+            console.log(error);
+        });
+});
+
+
+/**
+ * http://10.100.0.30:3300/files/inserOrUpdateNotes
+ * Notes
+ */
+router.post("/inserOrUpdateNotes", async (req, res, next) => {
+
+    var username = req.body.username
+    var content =  req.body.content
+
+    console.log(username)
+
+    pool_upd = await pool("fake", "fake")
+
+    pool_upd
+        .query(
+            "SELECT USERNAME FROM WRKTOMMAL.QUILL WHERE USERNAME = '" +
+            username.toUpperCase() + "'"
+        )
+        .then(async (result) => {
+            var sql = "INSERT INTO WRKTOMMAL.QUILL VALUES('" + username.toUpperCase() + "','" + content + "'"
+            if (result.length > 0) {
+              //  sql = "UPDATE WRKTOMMAL.QUILL SET CONTENT = '" + content + "' WHERE USERNAME = '" +  username.toUpperCase() + "'"
+                pool_upd = await pool("fake", "fake")
+                pool_upd
+                  .update('UPDATE WRKTOMMAL.QUILL SET CONTENT=? WHERE USERNAME=?', [content, username.toUpperCase()])
+                    .then((result) => {
+                        res.status(200).json(result);
+                    })
+                    .catch((error) => {
+                        res.status(404);
+                        console.log("error");
+                        console.log(error);
+                    });
+            }
+            else {
+                pool_upd = await pool("fake", "fake")
+                pool_upd
+                .insertAndGetId('INSERT INTO WRKTOMMAL.QUILL VALUES(?,?)', [username.toUpperCase(), content])
+                .then((result_all) => {
+                        res.status(200).json(result_all);
+                    })
+                    .catch((error) => {
+                        res.status(404);
+                        console.log("error");
+                        console.log(error);
+                    });
+            }
+
         })
         .catch((error) => {
             res.status(404);

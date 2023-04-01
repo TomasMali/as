@@ -18,3 +18,23 @@
     
 
 </template>
+
+
+
+<script setup>
+import { onMounted, ref } from "vue";
+import { prefStore } from "../stores/pref";
+
+
+const pref = prefStore();
+
+const sendMessage = async () => {
+    await pref.sendLogsAction(" ===> SHARE");
+}
+
+
+onMounted(() => {
+  sendMessage();
+});
+
+</script>

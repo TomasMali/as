@@ -49,10 +49,10 @@
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
         <q-separator class="q-my-xs" />
-        <EssentialLink class="q-mt-md text-overline " v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+        <EssentialLink class="q-mt-sm text-overline " v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
 
-      <q-separator style="margin-top: 36px" />
+      <q-separator style="margin-top: 8px" />
 
 
       <!-- Research List -->
@@ -116,7 +116,7 @@
       </div> -->
 
 
-      <div  class="absolute-bottom q-mb-xs shadow-10 q-pa-xs ">
+      <div  class="absolute-bottom q-mb-xs q-pa-xs ">
         <q-input v-model="sql_run" @keyup.enter="exec(sql_run)"  outlined  square color="primary" label-color="primary" label="Esegui subito SQL qui" clearable >
             <template v-slot:append>
               <q-icon name="search" color="primary" />
@@ -318,6 +318,20 @@ export default defineComponent({
           caption: "Condividi qualsiasi cosa",
           icon: "share",
           to: "/share",
+        });
+
+        linksList.push({
+          title: "Confronta testo",
+          caption: "Trova differenze",
+          icon: "rule",
+          to: "/diff",
+        });
+
+        linksList.push({
+          title: "Prendi nota",
+          caption: "Salva le tue note",
+          icon: "note",
+          to: "/note",
         });
 
 
