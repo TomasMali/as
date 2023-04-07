@@ -22,10 +22,10 @@ const openai = new OpenAIApi(configuration)
 
 
 router.post("/openai", async (req, res, next) => {
-    console.log("ecco qui")
-
+    
     try {
         const question = req.body.question;
+        console.log(req.body)
 
         const response = await openai.createCompletion({
             model: "text-davinci-003",
