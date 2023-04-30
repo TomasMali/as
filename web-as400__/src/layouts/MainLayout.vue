@@ -24,8 +24,7 @@
         </q-select>
 
         <q-select style="max-width: 250px;" class="q-mr-xl" v-model="model" use-input input-debounce="0" label="PROFILO"
-          label-color="yellow" :options="options" @filter="filterFn" @update:model-value="onClickLibdat"
-          behavior="menu">
+          label-color="yellow" :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -47,7 +46,9 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> <q-icon name="rocket_launch" color="primary" />
+          <a @click="sendMess()" href="http://10.100.0.30:8040"  class="q-ml-sm" target=”_blank”>Linux Container (Demo)</a>
+        </q-item-label>
         <q-separator class="q-my-xs" />
         <EssentialLink class="q-mt-sm text-overline " v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
@@ -65,8 +66,8 @@
 
       <div style="max-height: 250px; overflow: auto">
         <q-list bordered separator class="text-accent text-subtitle2">
-          <q-item @click="execFromMenu(item)" dense v-for="(item, index)  in queryStr.getLocalStorageFilesList"
-            clickable :key="item.filename">
+          <q-item @click="execFromMenu(item)" dense v-for="(item, index)  in queryStr.getLocalStorageFilesList" clickable
+            :key="item.filename">
 
             <q-item dense>
               <q-item-section>
@@ -116,18 +117,19 @@
       </div> -->
 
 
-      <div  class="absolute-bottom q-mb-xs q-pa-xs ">
-        <q-input v-model="sql_run" @keyup.enter="exec(sql_run)"  outlined  square color="primary" label-color="primary" label="Esegui subito SQL qui" clearable >
-            <template v-slot:append>
-              <q-icon name="search" color="primary" />
-            </template>
-          </q-input>
+      <div class="absolute-bottom q-mb-xs q-pa-xs ">
+        <q-input v-model="sql_run" @keyup.enter="exec(sql_run)" outlined square color="primary" label-color="primary"
+          label="Esegui subito SQL qui" clearable>
+          <template v-slot:append>
+            <q-icon name="search" color="primary" />
+          </template>
+        </q-input>
       </div>
-      
-      
-      
+
+
+
     </q-drawer>
-    
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -203,12 +205,12 @@ export default defineComponent({
     };
 
     const exec = async (sql) => {
-      if ( sql != undefined && sql != null && sql.length >= 3) {
-      router.push({ path: '/', hash: 'home' })
-      queryStr.loadingTable = true;
-      await queryStr.excecQuery(q.localStorage.getItem("currentUser"), sql);
-      queryStr.loadingTable = false;
-      queryStr.launchQueryPrefered = true;
+      if (sql != undefined && sql != null && sql.length >= 3) {
+        router.push({ path: '/', hash: 'home' })
+        queryStr.loadingTable = true;
+        await queryStr.excecQuery(q.localStorage.getItem("currentUser"), sql);
+        queryStr.loadingTable = false;
+        queryStr.launchQueryPrefered = true;
       }
     };
 
@@ -348,6 +350,19 @@ export default defineComponent({
       pref.setUserPref(model.value);
     };
 
+
+    const sendMess = () => {
+      sendInAsyncMsg()
+    };
+
+    const sendInAsyncMsg = async () => {
+      try {
+        await pref.sendLogsAction(" ===> Linux Container");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const loadUsers = async () => {
       try {
         const data = {
@@ -470,7 +485,9 @@ export default defineComponent({
       loadUserIps,
       stringOptionsIp,
       phrase,
-      loadPhrases
+      loadPhrases,
+      sendMess,
+      sendInAsyncMsg
     };
   },
 
@@ -490,8 +507,6 @@ export default defineComponent({
 });
 </script>
 
-<style  >
-
-</style>
+<style  ></style>
 
 
