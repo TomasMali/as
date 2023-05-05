@@ -43,6 +43,11 @@ const routes = [{
                     import ("pages/BotGPT.vue"),
             },
             {
+                path: "botjexp",
+                component: () =>
+                    import ("pages/BotJexp.vue"),
+            },
+            {
                 path: "share",
                 component: () =>
                     import ("pages/Share.vue"),

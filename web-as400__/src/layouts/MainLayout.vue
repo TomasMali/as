@@ -315,6 +315,14 @@ export default defineComponent({
           to: "/botgpt",
         });
 
+
+        linksList.push({
+          title: "ChatJexp",
+          caption: "Chiedimi qualsiasi cosa",
+          icon: "chat",
+          to: "/botjexp",
+        });
+
         linksList.push({
           title: "Condividi file",
           caption: "Condividi qualsiasi cosa",

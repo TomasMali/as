@@ -70,14 +70,14 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { botStore } from "../stores/bot";
+import { botjexpStore } from "../stores/botjexp";
 import { useQuasar } from "quasar";
 
 const q = useQuasar();
 
 const defaultUser = () => q.localStorage.getItem("currentUser");
 
-const bot = botStore();
+const bot = botjexpStore();
 
 const text = ref("");
 const response = ref("");
@@ -104,7 +104,7 @@ const getResponse = async () => {
   try {
     await bot.setBotRequest(strToSend);
     //    await bot.sendLogsAction(strToSend);
-    response.value = bot.getBotResponse.bot;
+    response.value = bot.getBotResponse;
     botText.value.push(response.value);
 
     console.log(response.value);
