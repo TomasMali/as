@@ -46,7 +46,7 @@
             bottom-slots
             @keyup.enter="go"
             v-model="text"
-            label="Chiedimi qualsiasi cosa"
+            label="Fammi una domanda su Jexp"
           >
             <template v-slot:append>
               <q-icon

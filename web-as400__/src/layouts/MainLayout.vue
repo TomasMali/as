@@ -9,9 +9,19 @@
           <!-- <Voice></Voice> -->
         </q-toolbar-title>
 
-        <q-select class="q-mr-md select-color " style=" max-width:310px" v-model="modelId" use-input input-debounce="0"
-          label="IP" label-color="yellow" :options="optionsIp" @filter="filterIp" @update:model-value="setIp"
-          behavior="menu">
+        <q-select
+          class="q-mr-md select-color"
+          style="max-width: 310px"
+          v-model="modelId"
+          use-input
+          input-debounce="0"
+          label="IP"
+          label-color="yellow"
+          :options="optionsIp"
+          @filter="filterIp"
+          @update:model-value="setIp"
+          behavior="menu"
+        >
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -23,8 +33,19 @@
           </template>
         </q-select>
 
-        <q-select style="max-width: 250px;" class="q-mr-xl" v-model="model" use-input input-debounce="0" label="PROFILO"
-          label-color="yellow" :options="options" @filter="filterFn" @update:model-value="onClickLibdat" behavior="menu">
+        <q-select
+          style="max-width: 250px"
+          class="q-mr-xl"
+          v-model="model"
+          use-input
+          input-debounce="0"
+          label="PROFILO"
+          label-color="yellow"
+          :options="options"
+          @filter="filterFn"
+          @update:model-value="onClickLibdat"
+          behavior="menu"
+        >
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">No results</q-item-section>
@@ -41,20 +62,29 @@
           <q-toggle color="red" v-model="dark" @click="toggleDark" />
         </div>
       </q-toolbar>
-
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> <q-icon name="rocket_launch" color="primary" />
-          <a @click="sendMess()" href="http://10.100.0.30:8040"  class="q-ml-sm" target=”_blank”>Linux Container (Demo)</a>
+        <q-item-label header>
+          <q-icon name="rocket_launch" color="primary" />
+          <a
+            @click="sendMess()"
+            href="http://10.100.0.30:8040"
+            class="q-ml-sm"
+            target="”_blank”"
+            >Linux Container (Demo)</a
+          >
         </q-item-label>
         <q-separator class="q-my-xs" />
-        <EssentialLink class="q-mt-sm text-overline " v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+        <EssentialLink
+          class="q-mt-xs text-overline"
+          v-for="link in essentialLinks"
+          :key="link.title"
+          v-bind="link"
+        />
       </q-list>
-
       <q-separator style="margin-top: 8px" />
-
 
       <!-- Research List -->
       <q-item-label header class="">
@@ -66,13 +96,17 @@
 
       <div style="max-height: 250px; overflow: auto">
         <q-list bordered separator class="text-accent text-subtitle2">
-          <q-item @click="execFromMenu(item)" dense v-for="(item, index)  in queryStr.getLocalStorageFilesList" clickable
-            :key="item.filename">
-
+          <q-item
+            @click="execFromMenu(item)"
+            dense
+            v-for="(item, index) in queryStr.getLocalStorageFilesList"
+            clickable
+            :key="item.filename"
+          >
             <q-item dense>
               <q-item-section>
                 <q-avatar size="25px">
-                  {{ (index + 1) }}
+                  {{ index + 1 }}
                 </q-avatar>
               </q-item-section>
             </q-item>
@@ -86,8 +120,6 @@
           </q-item>
         </q-list>
       </div>
-
-
 
       <!-- Query list -->
       <!-- <q-item-label header class="">
@@ -116,18 +148,22 @@
         </q-list>
       </div> -->
 
-
-      <div class="absolute-bottom q-mb-xs q-pa-xs ">
-        <q-input v-model="sql_run" @keyup.enter="exec(sql_run)" outlined square color="primary" label-color="primary"
-          label="Esegui subito SQL qui" clearable>
+      <div class="absolute-bottom q-mb-xs q-pa-xs">
+        <q-input
+          v-model="sql_run"
+          @keyup.enter="exec(sql_run)"
+          outlined
+          square
+          color="primary"
+          label-color="primary"
+          label="Esegui subito SQL qui"
+          clearable
+        >
           <template v-slot:append>
             <q-icon name="search" color="primary" />
           </template>
         </q-input>
       </div>
-
-
-
     </q-drawer>
 
     <q-page-container>
@@ -190,12 +226,8 @@ export default defineComponent({
     const stringOptions = ref([]);
     const options = ref([]);
 
-
-    const stringOptionsIp = ref([])
-    const optionsIp = ref([
-      "10.200.100.160 wrktommal"
-
-    ]);
+    const stringOptionsIp = ref([]);
+    const optionsIp = ref(["10.200.100.160 wrktommal"]);
     const modelId = ref(["10.200.100.160 WRKTOMMAL"]);
     const as = useStore();
     const pref = prefStore();
@@ -206,7 +238,7 @@ export default defineComponent({
 
     const exec = async (sql) => {
       if (sql != undefined && sql != null && sql.length >= 3) {
-        router.push({ path: '/', hash: 'home' })
+        router.push({ path: "/", hash: "home" });
         queryStr.loadingTable = true;
         await queryStr.excecQuery(q.localStorage.getItem("currentUser"), sql);
         queryStr.loadingTable = false;
@@ -215,8 +247,8 @@ export default defineComponent({
     };
 
     const execFromMenu = (item) => {
-      router.push({ path: '/', hash: 'home' })
-      queryStr.setFilenameSelected(item)
+      router.push({ path: "/", hash: "home" });
+      queryStr.setFilenameSelected(item);
     };
 
     const filterFn = (val, update) => {
@@ -235,8 +267,6 @@ export default defineComponent({
       });
     };
 
-
-
     const filterIp = (val, update) => {
       if (val === "") {
         update(() => {
@@ -254,12 +284,8 @@ export default defineComponent({
     };
 
     const onClickLibdat = (rr) => {
-
-
-
       as.setCurrentUser(model.value);
       q.localStorage.set("currentUser", model.value);
-
 
       pref.setUserPref(model.value);
       // q.$router.push({name: 'myPath'})
@@ -268,12 +294,6 @@ export default defineComponent({
       //router.push('/home')
       if (q.localStorage.getItem("currentUser") != "null") location.reload();
       else q.localStorage.remove("currentUser");
-
-
-
-
-
-
     };
 
     const loadUserPrefs = () => {
@@ -291,14 +311,12 @@ export default defineComponent({
           to: "/query",
         });
 
-
         linksList.push({
           title: "Workitems",
           caption: "Gestisci WI",
           icon: "manage_accounts",
           to: "/workitems",
         });
-
 
         linksList.push({
           title: "Trova programma/file",
@@ -307,7 +325,6 @@ export default defineComponent({
           to: "/utilizzatore",
         });
 
-
         linksList.push({
           title: "ChatGPT",
           caption: "Chiedimi qualsiasi cosa",
@@ -315,11 +332,10 @@ export default defineComponent({
           to: "/botgpt",
         });
 
-
         linksList.push({
           title: "ChatJexp",
           caption: "Chiedimi qualsiasi cosa",
-          icon: "chat",
+          icon: "stream",
           to: "/botjexp",
         });
 
@@ -344,23 +360,19 @@ export default defineComponent({
           to: "/note",
         });
 
-
         linksList.push({
           title: "Preferenze",
           caption: "pref",
           icon: "settings ",
           to: "/preference",
         });
-
-
       }
 
       pref.setUserPref(model.value);
     };
 
-
     const sendMess = () => {
-      sendInAsyncMsg()
+      sendInAsyncMsg();
     };
 
     const sendInAsyncMsg = async () => {
@@ -393,27 +405,27 @@ export default defineComponent({
 
     const loadIps = () => {
       if (!q.localStorage.getItem("as")) {
-
-        const str = modelId.value[0]
-        const ip = str.substring(0, str.indexOf(' ')); // "72"
-        const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
+        const str = modelId.value[0];
+        const ip = str.substring(0, str.indexOf(" ")); // "72"
+        const userDb = str.substring(str.indexOf(" ") + 1); // "tocirah sneab"
 
         q.localStorage.set("as", ip);
         q.localStorage.set("userDb", userDb.toUpperCase());
-        model.value = q.localStorage.getItem("userDb").toUpperCase()
+        model.value = q.localStorage.getItem("userDb").toUpperCase();
         // Load all the user preferences
-        onClickLibdat()
+        onClickLibdat();
       } else {
-        modelId.value[0] = q.localStorage.getItem("as") + " " + q.localStorage.getItem("userDb").toUpperCase()
-
+        modelId.value[0] =
+          q.localStorage.getItem("as") +
+          " " +
+          q.localStorage.getItem("userDb").toUpperCase();
       }
     };
 
     const setIp = () => {
-
-      const str = modelId.value
-      const ip = str.substring(0, str.indexOf(' ')); // "72"
-      const userDb = str.substring(str.indexOf(' ') + 1); // "tocirah sneab"
+      const str = modelId.value;
+      const ip = str.substring(0, str.indexOf(" ")); // "72"
+      const userDb = str.substring(str.indexOf(" ") + 1); // "tocirah sneab"
 
       // console.log("User ", userDb)
 
@@ -426,40 +438,36 @@ export default defineComponent({
 
     const loadDarkMode = () => {
       dark.value = q.localStorage.getItem("darkMode");
-      if (dark.value == undefined || dark.value == null)
-        dark.value = false
+      if (dark.value == undefined || dark.value == null) dark.value = false;
       q.dark.set(dark.value);
     };
 
     const loadUserQueries = async () => {
       await queryStr.selectUserQuery(q.localStorage.getItem("currentUser"));
 
-      queryStr.setFileNameListLocalStorage()
-
+      queryStr.setFileNameListLocalStorage();
     };
 
     const loadUserIps = async () => {
       try {
-
         await as.getIpsAction();
 
         as.getUserIps.forEach((element) => {
           optionsIp.value.push(element.CLIEIP + " " + element.USERDB);
 
           stringOptionsIp.value.push(element.CLIEIP + " " + element.USERDB);
-
         });
       } catch (error) {
         console.log(error);
       }
     };
 
-    const phrase = ref("")
+    const phrase = ref("");
     const loadPhrases = async () => {
       const response = await fetch("http://api.quotable.io/random?maxLength=70");
       const data = await response.json();
-      phrase.value = data
-    }
+      phrase.value = data;
+    };
 
     return {
       essentialLinks: linksList,
@@ -495,26 +503,22 @@ export default defineComponent({
       phrase,
       loadPhrases,
       sendMess,
-      sendInAsyncMsg
+      sendInAsyncMsg,
     };
   },
 
   mounted() {
+    this.loadPhrases();
 
-    this.loadPhrases()
-
-    this.loadUserIps()
+    this.loadUserIps();
 
     this.loadIps();
     this.loadDarkMode();
     this.loadUserPrefs();
     this.loadUsers();
     this.loadUserQueries();
-
   },
 });
 </script>
 
-<style  ></style>
-
-
+<style></style>
