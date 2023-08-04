@@ -608,7 +608,7 @@ export default {
           // Se non esiste
           if (!arrFileName.includes(fileName)) {
             // If it contains 7 element pop the first one
-            if (arrFileName.length > 9) {
+            if (arrFileName.length > 3) {
               arrFileName.shift();
               arrFileName.push(fileName);
               this.q.localStorage.set("fileNameList", arrFileName);

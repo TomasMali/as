@@ -105,14 +105,14 @@
           >
             <q-item dense>
               <q-item-section>
-                <q-avatar size="25px">
+                <q-avatar size="20px">
                   {{ index + 1 }}
                 </q-avatar>
               </q-item-section>
             </q-item>
 
             <q-item-section>
-              <div class="text-overline" style="font-size: 10px">
+              <div class="text-overline" style="font-size: 15px">
                 {{ item.libname + "." + item.filename }}
                 <!-- {{ item.all  }} -->
               </div>
@@ -248,6 +248,7 @@ export default defineComponent({
 
     const execFromMenu = (item) => {
       router.push({ path: "/", hash: "home" });
+      console.log(item)
       queryStr.setFilenameSelected(item);
     };
 
@@ -325,12 +326,12 @@ export default defineComponent({
           to: "/utilizzatore",
         });
 
-        linksList.push({
-          title: "ChatGPT",
-          caption: "Chiedimi qualsiasi cosa",
-          icon: "chat",
-          to: "/botgpt",
-        });
+        // linksList.push({
+        //   title: "ChatGPT",
+        //   caption: "Chiedimi qualsiasi cosa",
+        //   icon: "chat",
+        //   to: "/botgpt",
+        // });
 
         linksList.push({
           title: "ChatJexp",

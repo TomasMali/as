@@ -23,11 +23,18 @@ router.get("/find", async (req, res, next) => {
     req.query.programName.toUpperCase() +
     "%') C  order by LIBRCT DESC";
 
-  console.log(sql);
+
+  // with show occorrence = 's'
+  const sqlFindProgramOnly = "SELECT DISTINCT (SRCCT),LIBRCT,SRCTCT  FROM   PALSV.CAT_SORGEN cs WHERE trim(SRCCT) = '" + req.query.programName.toUpperCase() + "' "
+
+  if (req.query.showoccurence === "s")
+    console.log(sqlFindProgramOnly);
+  else
+    console.log(sql);
 
   pool_upd
     .query(
-      sql
+      (req.query.showoccurence === "s") ? sqlFindProgramOnly : sql
       // (req.query.showoccurence === 's') ? sql_str : show_only_progrm
     )
     .then((result) => {

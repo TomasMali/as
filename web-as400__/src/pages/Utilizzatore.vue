@@ -17,14 +17,14 @@
 
 
             <!-- Cerca il programma -->
-            <!-- <q-input class="q-ml-xl" dense square color="primary" label-color="primary"  v-model="utStore.searchProgram"
-            label="Visualizza un programma">
+            <q-input class="q-ml-xl" dense square color="primary" label-color="primary"  v-model="utStore.searchProgram"
+            label="Visualizza un programma" @keyup.enter="onClickFindOne">
             <template v-slot:append>
               <q-icon name="search" color="primary" />
             </template>
           </q-input>
-          <q-btn dense inline color="primary q-ml-sm" label="Search" icon-right="search" @click="onClickUtt"
-            :disable="utStore.searchProgram.length < 3" /> -->
+          <q-btn dense inline color="primary q-ml-sm" label="Search" icon-right="search" @click="onClickFindOne"
+            :disable="utStore.searchProgram.length < 3" />
 
         </div>
       </q-card-section>
@@ -121,12 +121,12 @@
                 <q-td key="SRCDAT" :props="props" style="white-space: pre-wrap; font-family: 'Courier New', Courier, monospace;">
                   {{ props.row.SRCDAT }}
                 </q-td>
-                <q-td key="SRCDTA" :props="props" style="white-space: pre-wrap; font-family: 'Courier New', Courier, monospace;">
-                  <q-badge v-if="props.row.SRCDTA.includes(utStore.search.toUpperCase())" color="purple" class="q-pa-sm">
-                    {{ props.row.SRCDTA }}
+                <q-td key="SRCDTA" :props="props" style="white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; ">
+                  <q-badge v-if="changeColor(props.row.SRCDTA,utStore.search.toUpperCase())" color="purple" class="q-pa-sm">
+                    <b style="font-weight: bold; font-size: 14px;">{{ props.row.SRCDTA }}</b>
                   </q-badge>
                   <div v-else>
-                    {{ props.row.SRCDTA }}
+                    <b style="font-weight: bold; font-size: 14px;">{{ props.row.SRCDTA }}</b>
                   </div>
                 </q-td>
                 <q-td key="SRCSEQ" :props="props">
@@ -153,8 +153,22 @@ const utStore = uttilStore();
 //const tabCol = ref(null);
 
 const onClickUtt = () => {
-  // queryStr.cleanDialog()
+  if(utStore.search.length > 3){
+  utStore.showoccurence = false
   loadUtt();
+  }
+};
+
+const changeColor = (row,match) => {
+   return (row.includes(match) &&  !utStore.showoccurence)
+};
+
+
+const onClickFindOne = () => {
+  if(utStore.searchProgram.length > 3){
+  utStore.showoccurence = true
+  loadUtt();
+  }
 };
 
 const loadUtt = async () => {
@@ -162,7 +176,7 @@ const loadUtt = async () => {
     const data = {
       showoccurence: utStore.showoccurence ? "s" : "",
       //  includesql: utStore.includesql ? "s" : "",
-      programName: utStore.search,
+      programName: utStore.showoccurence ?utStore.searchProgram :utStore.search,
     };
 
     utStore.loading = true;
