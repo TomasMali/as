@@ -23,6 +23,7 @@ CMD [ "npm", "start" ]
 
 #docker run -it --rm -d -v "C:\\Users\\tommal\\Documents\\web-as400\\as400_db:/app" -v /app/node_modules -p 330:3300 backend
 # sudo docker run --name backend -it --rm -v "/home/tommal/Desktop/web-as400/as400_db:/app" -v /app/node_modules -p 3300:3300 backend
+# docker run --name backend -it --rm -v "/Users/tommal/Desktop/as_2/as/as400_db:/app" -v /app/node_modules -p 3300:3300 tommal/as
 
 
 # sudo docker build -t tommal/as .
@@ -30,4 +31,4 @@ CMD [ "npm", "start" ]
 
 
 #LINUX
-# sudo docker run --name backend -it --rm -v "/home/tommal/Scrivania/as/as400_db:/app" -v /app/node_modules -p 3300:3300 backend
+# sudo docker run --name backend -it --rm -v "/home/tommal/Scrivania/as/as400_db:/app" -v /app/node_modules -p 3300:3300 as

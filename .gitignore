@@ -1,3 +1,5 @@
 /as400_db/.env
 /as400_db/node_modules
 /web-as400__/node_modules
+.env
+.env.*
