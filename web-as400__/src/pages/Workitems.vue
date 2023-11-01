@@ -144,7 +144,7 @@
           table-header-class="text-white "
           :rows="wiStore.getWis"
           :columns="wiStore.columns"
-          row-key="indwiStore.getWis.ID"
+          row-key="wiStore.getWis.ID"
           dense
           auto-width
           :grid="wiStore.grid"

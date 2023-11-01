@@ -15,6 +15,11 @@ const routes = [{
                     import ("pages/Test.vue")
             },
             {
+                path: "ticket",
+                component: () =>
+                    import ("pages/Ticket.vue")
+            },
+            {
                 path: "query",
                 component: () =>
                     import ("pages/Query.vue"),

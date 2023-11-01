@@ -326,12 +326,12 @@ export default defineComponent({
           to: "/utilizzatore",
         });
 
-        // linksList.push({
-        //   title: "ChatGPT",
-        //   caption: "Chiedimi qualsiasi cosa",
-        //   icon: "chat",
-        //   to: "/botgpt",
-        // });
+        linksList.push({
+          title: "Ticket",
+          caption: "Trova ticket",
+          icon: "chat",
+          to: "/ticket",
+        });
 
         linksList.push({
           title: "ChatJexp",

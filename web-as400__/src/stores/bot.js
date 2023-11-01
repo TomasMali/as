@@ -31,6 +31,7 @@ export const botStore = defineStore("bot", {
                 redirect: "follow",
                 referrerPolicy: "no-referrer",
                 enctype: "mutipart/form-data",
+                
             });
 
             const responseData = await response.json();

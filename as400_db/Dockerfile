@@ -27,3 +27,7 @@ CMD [ "npm", "start" ]
 
 # sudo docker build -t tommal/as .
 #docker run -it -d --restart always -p 3300:3300 --name c-as tommal/as
+
+
+#LINUX
+# sudo docker run --name backend -it --rm -v "/home/tommal/Scrivania/as/as400_db:/app" -v /app/node_modules -p 3300:3300 backend
